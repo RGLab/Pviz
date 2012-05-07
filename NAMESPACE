@@ -1,0 +1,22 @@
+#importClassesFrom(Gviz, DataTrack, AnnotationTrack, GenomeAxisTrack, DisplayPars)
+#importMethodsFrom(Gviz, "displayPars<-")
+#importFrom(Gviz, DataTrack, AnnotationTrack, GenomeAxisTrack, DisplayPars,
+#	 plotTracks,
+#	 getPar,
+#	 setPar
+#	 )
+	
+	
+
+import("methods")
+
+importClassesFrom(Gviz, DataTrack, AnnotationTrack, DisplayPars)
+importFrom(Gviz, DataTrack, AnnotationTrack, DisplayPars)
+importClassesFrom(HIV.db, HivFeature)
+
+
+exportClasses("DTrack","ATrack","ProbeTrack","SequenceTrack")
+export("DTrack","ATrack","ProbeTrack","SequenceTrack")
+
+#exportClasses("DTrack")
+#export("DTrack")
