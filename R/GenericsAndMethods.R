@@ -38,7 +38,6 @@ setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
 ## legend is the scale of intensities
 ####
 setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, maxBase, vpPosition, prepare=FALSE, subset=TRUE) 
-#setMethod("drawGD", signature("ProbeTrack"), function(GdObject, minBase, maxBase, vpPosition, prepare=FALSE, subset=TRUE) 
 {
 		#Select only what is in range
 		if(subset)
@@ -271,8 +270,7 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 	}
 	
 	
-	### DRAWING MODE
-	
+	### DRAWING MODE	
 	cex<-getPar(GdObject,"cex")
 	color<-getPar(GdObject,"fontcolor")
 	len <- (maxBase-minBase + 1)
@@ -287,7 +285,6 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 		grid.text(label=char,gp=gpar(cex=cex,col=color))
 		popViewport(1)
 	}
-
 	popViewport(1)
 	
 })	
@@ -298,13 +295,13 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 
 
 #####
-#####
 ### Record the display parameters for each class once
+#####
 .makeParMapping <- function()
 {
     classes <-  c("ATrack", "DTrack", "ProbeTrack","SequenceTrack")
     defs <-  sapply(classes, function(x) as(getClassDef(x)@prototype@dp, "list"), simplify=FALSE)
     if(is.null(.parMappings))
-        assignInNamespace(x=".parMappings", value=defs, ns="Rviz")
+        assignInNamespace(x=".parMappings", value=defs, ns="Pviz")
 }
 .parMappings <- NULL
