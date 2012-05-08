@@ -8,7 +8,7 @@
 	
 	
 
-import("methods")
+#import("methods","Gviz")
 
 importClassesFrom(Gviz, DataTrack, AnnotationTrack, DisplayPars)
 importFrom(Gviz, DataTrack, AnnotationTrack, DisplayPars)
@@ -17,6 +17,3 @@ importClassesFrom(HIV.db, HivFeature)
 
 exportClasses("DTrack","ATrack","ProbeTrack","SequenceTrack")
 export("DTrack","ATrack","ProbeTrack","SequenceTrack")
-
-#exportClasses("DTrack")
-#export("DTrack")

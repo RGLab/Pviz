@@ -33,8 +33,6 @@ setMethod("getHivFeatureSeq", def=function(HIVF) as.character(HIVF@HIV_db$hxb2AA
 setGeneric("getSequenceSeq", def=function(GdObject) standardGeneric("getSequenceSeq"))
 setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
 
-
-#setGeneric("drawGD", function(GdObject, ...) standardGeneric("drawGD"))
 ####
 ## drawGD for ProbeTrack
 ## legend is the scale of intensities
@@ -125,7 +123,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 						pushViewport(viewport(y=0, height=unit(lSpace, "inches"), just=c(0.5, 0),
 										gp=gpar(cex=cex, fontsize=fontsize, fontface=fontface, fontcolor=fontcolor)))#,
 												#lineheight=lineheight)))
-						grid.rect(gp=gpar(col="green"))
+						#grid.rect(gp=gpar(col="green"))
 						pushViewport(viewport(width=unit(1, "npc") - unit(0.1, "inches"), height=unit(1, "npc") - unit(0.1, "inches")))
 
 						boxSize <- getPar(GdObject, ".__boxSize")

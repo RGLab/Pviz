@@ -1,3 +1,5 @@
+##FIXME Gviz classes produce warnings when R CMD INSTALL 
+
 ###
 # DataTrack class with defaulted chromosome/genome
 # @protein: slot for the protein name (label/lengend + subsetting purposes)
