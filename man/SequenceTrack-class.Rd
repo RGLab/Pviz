@@ -16,15 +16,16 @@
 }
 
 \usage{
-	SequenceTrack(anno, addNC = FALSE, name = "Sequence", ...)
+	SequenceTrack(anno = NULL, sequence = NULL, name = "Sequence", ...)
 }
 
 \arguments{
 	\item{anno}{Object of class \code{\link[HIV.db:HivFeature-class]{"HivFeature"}}.
-		The Sequence to be displayed needs to be the first element of this \code{\link[HIV.db:HivFeature-class]{"HivFeature"}}.}
+		The Sequence to be displayed needs to be the first element of this \code{\link[HIV.db:HivFeature-class]{"HivFeature"}}.
+		It is possible to directl supply a character sequence instead.}
 		
-	\item{addNC}{Object of class \code{"logical"}.
-		Displays the Amino-terminal and Carboxyl-terminal ends on the SequenceTrack.}
+	\item{sequence}{Object of class \code{"character"}.
+		The sequence to be displayed.}
 		
 	\item{name}{Character scalar of the track's name used in the title
    		panel when plotting.}
@@ -39,12 +40,8 @@
 
 \section{Slots}{
   \describe{
-    \item{\code{anno}:}{Object of class \code{\link[HIV.db:HivFeature-class]{"HivFeature"}}.
-    	It needs to have the feature whose sequence will be the reference as first element.}
     \item{\code{sequence}:}{Object of class \code{"character"},
     	The sequence itself}
-    \item{\code{addNC}:}{Object of class \code{"logical"},
-    	Display the N/C ends of the sequence}
     \item{\code{dp}:}{Object of class \code{\linkS4class{DisplayPars}},
       inherited from class \code{\linkS4class{GdObject}}}
     \item{\code{name}:}{Object of class \code{"character"}, 

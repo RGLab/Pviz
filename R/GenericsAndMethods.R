@@ -249,7 +249,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 			popViewport(1)
 		}
 		popViewport(1)
-	
+		return(invisible(GdObject))
 		
 })
 
@@ -286,10 +286,85 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 		popViewport(1)
 	}
 	popViewport(1)
-	
+	return(invisible(GdObject))
 })	
 
+####
+## drawGD for ProteinAxisTrack
+####
 
+
+setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...) 
+{
+	
+	pushViewport(dataViewport(xData=c(minBase, maxBase), yscale=c(0, 1), extension=0))
+	cex <- Gviz:::.dpOrDefault(GdObject, "cex", 0.8)
+	labelPos <- Gviz:::.dpOrDefault(GdObject, "labelPos", "alternating")
+	lwd<-getPar(GdObject,"lwd")		
+	pres <- Gviz:::.pxResolution()
+	textYOff <-  pres["y"]*3
+	lwdAdd <- (lwd-1)/2		
+	dfact <- max(1, Gviz:::.dpOrDefault(GdObject, "distFromAxis", 1))
+	littleTicks <- Gviz:::.dpOrDefault(GdObject, "littleTicks", FALSE)
+	tickHeight <- (ifelse(littleTicks, 2, 1) * 3 * dfact + lwdAdd) * pres["y"]
+	
+	### PREPARE MODE
+	#Figure out the optimal vertical size
+	if(prepare)
+	{
+		pyOff <- pres["y"]*1.5
+		nsp <- if(is.null(Gviz:::.dpOrDefault(GdObject, "scale", NULL))){
+					(sum(tickHeight, pyOff*2, textYOff*2 + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex)*2*1.3)/pres["y"]
+				} else {
+					labelPos <- match.arg(labelPos, c("alternating", "revAlternating", "above", "below", "beside"))
+					if(labelPos %in% c("above", "below")){
+						(sum(tickHeight, pyOff*2 + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex)*2)/pres["y"]
+					} else {
+						(sum(tickHeight, pyOff*2 + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex))/pres["y"]
+					}
+				}
+		displayPars(GdObject) <- list("neededVerticalSpace"=nsp)
+		popViewport(1)
+		return(invisible(GdObject))
+	}
+	
+	### DRAWING MODE
+	
+	#Get DisplayParameters
+	color <- Gviz:::.dpOrDefault(GdObject, "col", "darkgray")[1]
+	alpha<-getPar(GdObject,"alpha")
+	fontface <- Gviz:::.dpOrDefault(GdObject, "fontface", 1)
+
+
+		axRange=c(as.numeric(minBase),as.numeric(maxBase))
+		
+		#draw the axis
+		grid.segments(x0=minBase, y0=0.5, x1=maxBase,  y1=0.5,
+		default.units="native",
+		gp=gpar(col=color, alpha=alpha, lwd=lwd*2))
+
+		#vertical ticks
+
+		#Get label position (relative to the axis)
+		labelPos <- match.arg(labelPos, c("alternating", "revAlternating", "above", "below", "beside"))
+		#Get the optimal ticks number and coordinates
+		tck <- Gviz:::.ticks(axRange)
+		y0t <- rep(c(0.5), length(tck))[1:length(tck)]
+		y1t <- y0t + rep(c(tickHeight, -tickHeight), length(tck))[1:length(tck)]
+		y0t <- switch(labelPos, "alternating"=y0t, "revAlternating"=-y0t, "above"=abs(y0t), "below"=-abs(y0t), "beside"=y0t)
+		y1t <- switch(labelPos, "alternating"=y1t, "revAlternating"=-y1t, "above"=abs(y1t), "below"=-abs(y1t), "beside"=y1t)
+		grid.segments(x0=tck, x1=tck, y0=y0t, y1=y1t,  default.units="native", gp=gpar(col=color, alpha=alpha, lwd=lwd, lineend="square"))
+		
+		tckText <- tck
+		label<-as.character(tckText)
+		ylabs<-(y1t-0.5)*2+0.5
+		ylabs <- y1t + (ifelse(y1t>0.5, 1, -1) * (textYOff + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex))
+		grid.text(label=label, x=tck, y=ylabs, just=c("centre", "centre"),
+				gp=gpar(cex=cex, fontface=fontface), default.units="native")
+	
+	popViewport(1)
+	return(invisible(GdObject))
+})
 
 
 
@@ -299,9 +374,26 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 #####
 .makeParMapping <- function()
 {
-    classes <-  c("ATrack", "DTrack", "ProbeTrack","SequenceTrack")
+    classes <-  c("ATrack", "DTrack", "ProbeTrack","SequenceTrack","ProteinAxisTrack")
     defs <-  sapply(classes, function(x) as(getClassDef(x)@prototype@dp, "list"), simplify=FALSE)
     if(is.null(.parMappings))
         assignInNamespace(x=".parMappings", value=defs, ns="Pviz")
 }
 .parMappings <- NULL
+
+
+## Compute pretty tickmark location (code from tilingArray package)
+## Arguments:
+##    o x: a vector of data values
+## Value: the tick mark coordinates
+.ticks <- function(x){
+	rx <- range(x)
+	lz <- log((rx[2]-rx[1])/3, 10)
+	fl <- floor(lz)
+	if( lz-fl > log(5, 10))
+		fl <- fl +  log(5, 10)
+	tw <- round(10^fl)
+	i0 <- ceiling(rx[1]/tw)
+	i1 <- floor(rx[2]/tw)
+	seq(i0, i1)*tw
+}

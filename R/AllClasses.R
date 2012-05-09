@@ -135,30 +135,65 @@ ProbeTrack <- function(sequence, intensity, probeStart, protein, name="ProbeTrac
 ###
 setClass("SequenceTrack",
 		contains="GdObject",
-		representation(anno="HivFeature",
-				sequence="character",
-				addNC="logical"),
-		prototype(addNC=FALSE,
+		representation(
+				sequence="character"),
+		prototype(
 				dp = DisplayPars(size=0.25 #to keep it closer to a potential Axis
 						)
 		)
 )
 
-setMethod("initialize", "SequenceTrack", function(.Object, anno, sequence, addNC, name, ...)
+setMethod("initialize", "SequenceTrack", function(.Object, sequence, name, ...)
 {
 	.makeParMapping()
-	.Object@anno<-anno
 	.Object@sequence<-sequence
-	.Object@addNC<-addNC
 	.Object@name<-name
 	.Object <- callNextMethod()
 })
 
 ## SequenceTrack constructor
-SequenceTrack<-function(anno, addNC=FALSE, name="Sequence", ...)
+SequenceTrack<-function(anno=NULL, sequence=NULL, name="Sequence", ...)
 {
-	sequence<-getHivFeatureSeq(anno)
-	new("SequenceTrack", anno=anno, sequence=sequence, addNC=addNC, name=name, ...)
+	if(!is.null(anno))
+	{	
+		#Get the sequence from HivFeature object
+		sequence<-getHivFeatureSeq(anno)
+	}
+	if(is.null(sequence))
+	{
+		stop("A sequence or HivFeature object should be supplied")
+	}
+	new("SequenceTrack", sequence=sequence, name=name, ...)
+}
+
+
+
+###
+# ProteinAxisTrack
+# Track to display the sequence axis
+###
+setClass("ProteinAxisTrack",
+		contains="GenomeAxisTrack",
+		representation(addNC="logical"),
+		prototype(addNC=FALSE,
+				dp=DisplayPars(
+						lwd=2
+					)
+		)
+)
+
+setMethod("initialize", "ProteinAxisTrack", function(.Object, addNC, ...)
+{
+	.makeParMapping()
+	.Object<-callNextMethod()
+			
+})
+		
+		
+## ProteinAxisTrack constructor
+ProteinAxisTrack<-function(range=NULL, name="Axis", addNC=FALSE, ...)
+{
+	new("ProteinAxisTrack", range=range, name=name, addNC=addNC, ...)
 }
 
 
