@@ -33,6 +33,10 @@ setMethod("getHivFeatureSeq", def=function(HIVF) as.character(HIVF@HIV_db$hxb2AA
 setGeneric("getSequenceSeq", def=function(GdObject) standardGeneric("getSequenceSeq"))
 setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
 
+#ProteinAxisTrack Accessors
+setGeneric("getNC", def=function(obj) standardGeneric("getNC"))
+setMethod("getNC", def=function(obj) obj@addNC)
+
 ####
 ## drawGD for ProbeTrack
 ## legend is the scale of intensities
@@ -361,6 +365,13 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		ylabs <- y1t + (ifelse(y1t>0.5, 1, -1) * (textYOff + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex))
 		grid.text(label=label, x=tck, y=ylabs, just=c("centre", "centre"),
 				gp=gpar(cex=cex, fontface=fontface), default.units="native")
+		
+		#Draw NC ends if needed
+		if(getNC(GdObject))
+		{
+			grid.text(label="NH", x=0, y=1, gp=gpar(cex=cex, fontface=fontface))
+			grid.text(label="COOH         ", x=1, y=1, gp=gpar(cex=cex, fontface=fontface))
+		}
 	
 	popViewport(1)
 	return(invisible(GdObject))

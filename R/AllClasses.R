@@ -185,6 +185,7 @@ setClass("ProteinAxisTrack",
 setMethod("initialize", "ProteinAxisTrack", function(.Object, addNC, ...)
 {
 	.makeParMapping()
+	.Object@addNC<-addNC
 	.Object<-callNextMethod()
 			
 })
