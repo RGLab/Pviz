@@ -49,7 +49,6 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 			GdObject <- subset(GdObject, from=minBase, to=maxBase)
 		}
 		
-		##FIXME make it possible to supply a list of length > 1
 		indexVec<-which(ProbeStart(GdObject)[[1]]+15>minBase & ProbeStart(GdObject)[[1]]<maxBase)
 		
 		ProbeStart(GdObject)[[1]]<-ProbeStart(GdObject)[[1]][indexVec]
@@ -311,12 +310,13 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 	dfact <- max(1, Gviz:::.dpOrDefault(GdObject, "distFromAxis", 1))
 	littleTicks <- Gviz:::.dpOrDefault(GdObject, "littleTicks", FALSE)
 	tickHeight <- (ifelse(littleTicks, 2, 1) * 3 * dfact + lwdAdd) * pres["y"]
+	pyOff <- pres["y"]*1.5
+	pxOff <- pres["x"]*5
 	
 	### PREPARE MODE
 	#Figure out the optimal vertical size
 	if(prepare)
 	{
-		pyOff <- pres["y"]*1.5
 		nsp <- if(is.null(Gviz:::.dpOrDefault(GdObject, "scale", NULL))){
 					(sum(tickHeight, pyOff*2, textYOff*2 + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex)*2*1.3)/pres["y"]
 				} else {
@@ -353,6 +353,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		labelPos <- match.arg(labelPos, c("alternating", "revAlternating", "above", "below", "beside"))
 		#Get the optimal ticks number and coordinates
 		tck <- Gviz:::.ticks(axRange)
+		tck <- tck[tck<axRange[2]-pxOff*2 & tck>axRange[1]+pxOff*2]
 		y0t <- rep(c(0.5), length(tck))[1:length(tck)]
 		y1t <- y0t + rep(c(tickHeight, -tickHeight), length(tck))[1:length(tck)]
 		y0t <- switch(labelPos, "alternating"=y0t, "revAlternating"=-y0t, "above"=abs(y0t), "below"=-abs(y0t), "beside"=y0t)
@@ -361,10 +362,60 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		
 		tckText <- tck
 		label<-as.character(tckText)
-		ylabs<-(y1t-0.5)*2+0.5
+		ylabs<-(y1t-0.5)*3+0.5
 		ylabs <- y1t + (ifelse(y1t>0.5, 1, -1) * (textYOff + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex))
 		grid.text(label=label, x=tck, y=ylabs, just=c("centre", "centre"),
 				gp=gpar(cex=cex, fontface=fontface), default.units="native")
+		
+		
+		## The scecond level ticks and labels if necessary
+		lcex <- cex*0.75 #slightly smaller labels
+		if (Gviz:::.dpOrDefault(GdObject, "littleTicks", FALSE) && length(tck)>1)
+		{
+			avSpace <- min(diff(tck))
+			spaceFac <- 1.8
+			spaceNeeded <- min(as.numeric(convertWidth(stringWidth(if(is.character(label)) label else "000000000"),"native"))/2)*lcex*spaceFac
+			nTcks <- (avSpace %/% spaceNeeded)
+			print(nTcks)
+			if(nTcks%%2 == 0)
+				nTcks <- nTcks-1
+			btck <- tck
+			if (!(minBase %in% btck))
+				btck <- c(minBase, btck)
+			if (!(maxBase %in% btck))
+				btck <- c(btck, maxBase)
+			y0lt <- y1lt <- ltck <- NULL
+			for(i in seq_len(length(btck)-1))
+			{
+				toFill <- btck[i:(i+1)]
+				ttck <- if(i==1) rev(toFill[2]-(avSpace/nTcks)*seq_len(nTcks-1)) else toFill[1]+(avSpace/nTcks)*seq_len(nTcks-1)
+				ltck <- c(ltck, ttck)
+				ord <- if(i==1){ if(y1t[1]>0.5) c(1,-1) else c(-1,1) } else if(y1t[i-1]<0.5) c(1,-1) else c(-1,1)
+				y0 <- rep(0.5, length(ttck))[1:length(ttck)]
+				y1 <- y0 + rep(ord*tickHeight/2, length(ttck))[1:length(ttck)]
+				y0lt <- c(y0lt, switch(labelPos, "alternating"=y0, "revAlternating"=y0, "above"=abs(y0), "below"=-abs(y0)))
+				y1lt <- c(y1lt, switch(labelPos, "alternating"=y1, "revAlternating"=y1, "above"=abs(y1), "below"=-abs(y1)))
+			}
+			endPadding <- pres["x"]*15
+			sel <- ltck > min(tck, axRange+endPadding) & ltck < max(tck, axRange-endPadding)
+			if(length(ltck[sel]) && min(diff(tck))>nTcks)
+			{
+				grid.segments(x0=ltck[sel], x1=ltck[sel], y0=y0lt[sel], y1=y1lt[sel],  default.units="native",
+						gp=gpar(col=color, alpha=alpha, lwd=lwd, lineend="square"))
+				ltckText <- ltck[sel]
+				llabel<-as.character(as.integer(ltckText))
+				ytlabs <- y1lt + (ifelse(y1lt>0.5, 1, -1) * (textYOff + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*lcex))
+				if(is.character(label))
+					grid.text(label=llabel, x=ltck[sel], y=ytlabs[sel], just=c("centre", "centre"),
+							gp=gpar(cex=lcex, fontface=fontface), default.units="native")
+				else
+					for(i in seq_along(llabel))
+						grid.text(label=llabel[[i]], x=ltck[sel][i], y=ytlabs[sel][i], just=c("centre", "centre"),
+								gp=gpar(cex=lcex, fontface=fontface), default.units="native")  
+			}
+		}
+		
+		
 		
 		#Draw NC ends if needed
 		if(getNC(GdObject))
