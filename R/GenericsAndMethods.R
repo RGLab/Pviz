@@ -376,7 +376,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			spaceFac <- 1.8
 			spaceNeeded <- min(as.numeric(convertWidth(stringWidth(if(is.character(label)) label else "000000000"),"native"))/2)*lcex*spaceFac
 			nTcks <- (avSpace %/% spaceNeeded)
-			print(nTcks)
 			if(nTcks%%2 == 0)
 				nTcks <- nTcks-1
 			btck <- tck
