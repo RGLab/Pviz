@@ -2,3 +2,4 @@ importClassesFrom(HIV.db, HivFeature)
 
 exportClasses("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack")
 export("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack")
+export("plotTracks")

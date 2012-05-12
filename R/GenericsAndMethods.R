@@ -26,7 +26,7 @@ setReplaceMethod("ProbeSequence", "ProbeTrack", function(obj, value){
 			return(obj)
 		})
 
-#Sequence Track Accessors
+#HivFeature Accessors
 setGeneric("getHivFeatureSeq", def=function(HIVF) standardGeneric("getHivFeatureSeq"))
 setMethod("getHivFeatureSeq", def=function(HIVF) as.character(HIVF@HIV_db$hxb2AA[1,]))
 
@@ -339,7 +339,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 	alpha<-getPar(GdObject,"alpha")
 	fontface <- Gviz:::.dpOrDefault(GdObject, "fontface", 1)
 
-
 		axRange=c(as.numeric(minBase),as.numeric(maxBase))
 		
 		#draw the axis
@@ -458,3 +457,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 	i1 <- floor(rx[2]/tw)
 	seq(i0, i1)*tw
 }
+
+#############################
+##  Add the scale conversion to plotTracks.
