@@ -108,7 +108,7 @@ setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, pro
 		})
 
 ## ProbeTrack constructor
-ProbeTrack <- function(sequence, intensity, probeStart, protein, name="ProbeTrack", ...)
+ProbeTrack <- function(sequence, intensity, probeStart, protein=NULL, name="ProbeTrack", ...)
 {
 	if(missing(probeStart)) stop("Need probeStart argument to know where to plot the data on the genome")
 	if(missing(sequence)) stop("Need sequence argument to know what to plot")
@@ -182,21 +182,30 @@ setClass("ProteinAxisTrack",
 		)
 )
 
-setMethod("initialize", "ProteinAxisTrack", function(.Object, addNC, ...)
+setMethod("initialize", "ProteinAxisTrack", function(.Object, addNC, name, ...)
 {
 	.makeParMapping()
 	.Object@addNC<-addNC
+	.Object@name<-name
 	.Object<-callNextMethod()
 			
 })
 		
-		
+#		
+### ProteinAxisTrack constructor
+#ProteinAxisTrack<-function(range=NULL, name="Axis", addNC=FALSE, id=NULL, ...)
+#{
+#	new("ProteinAxisTrack", range=range, name=name, addNC=addNC, id=id...)
+#}
+
+
 ## ProteinAxisTrack constructor
-ProteinAxisTrack<-function(range=NULL, name="Axis", addNC=FALSE, ...)
+ProteinAxisTrack<-function(range=NULL, name="Axis", addNC=FALSE, id=NULL, ...)
 {
-	new("ProteinAxisTrack", range=range, name=name, addNC=addNC, ...)
+	GvizGAT<-new("GenomeAxisTrack", name=name, range=range, id=id, ...)
+	new("ProteinAxisTrack",range=GvizGAT@range,
+			name=GvizGAT@name,
+			id=GvizGAT@id,
+			addNC=addNC, ...)
 }
-
-
-
 

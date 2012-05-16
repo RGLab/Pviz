@@ -62,7 +62,6 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 		defIntensityRange<-c(min(GdObject@intensity[[1]]),max(GdObject@intensity[[1]]))
 		range.legend<-Gviz:::.dpOrDefault(GdObject, "ylim", defIntensityRange)
 		
-		
 		totalRows<-length(probeStart)
 		
 		### PREPARE MODE
@@ -299,7 +298,7 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 
 setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...) 
 {
-	
+	#if(minBase==0) {minBase<-1}
 	pushViewport(dataViewport(xData=c(minBase, maxBase), yscale=c(0, 1), extension=0))
 	cex <- Gviz:::.dpOrDefault(GdObject, "cex", 0.8)
 	labelPos <- Gviz:::.dpOrDefault(GdObject, "labelPos", "alternating")
@@ -338,29 +337,125 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 	color <- Gviz:::.dpOrDefault(GdObject, "col", "darkgray")[1]
 	alpha<-getPar(GdObject,"alpha")
 	fontface <- Gviz:::.dpOrDefault(GdObject, "fontface", 1)
+	
+		refScale<-getPar(GdObject, "refScale")
+		#For reference coordinates system
+		if(!is.null(refScale))
+		{
+			axRange<-c(refScale[minBase],refScale[maxBase])
+			col.gap <- Gviz:::.dpOrDefault(GdObject,"col.gap","black")
+			col.range <- Gviz:::.dpOrDefault(GdObject,"col.range","black")
+			len <- (maxBase-minBase + 1)
+			
+			tckTmp<-Gviz:::.ticks(axRange)
+			label<-as.character(tckTmp)
+			tck<-numeric(0)
+			
+			#Change the @range to plot the highlighted regions properly
+			HRanges<-c()
+			if(length(GdObject))
+			{
+				end(GdObject)<-coord2ext(end(GdObject),refScale)
+				start(GdObject)<-coord2ext(start(GdObject),refScale)
+				for(r in 1:length(GdObject))
+				{
+					HRanges<-c(HRanges, seq(start(GdObject)[r],end(GdObject)[r]))
+				}
+			}
+			for(i in minBase:maxBase)
+			{
+				vpAxisPos<-viewport(x=(1/(len-1))*(i-minBase),
+						width=1/(len-1))
+				pushViewport(vpAxisPos)
 
-		axRange=c(as.numeric(minBase),as.numeric(maxBase))
+				#Determine if highlighted region
+				if(i>1 && refScale[i]==refScale[i-1]) #gap
+				{
+					if(i %in% HRanges)
+					{
+						grid.segments(x0=0, y0=0.5, x1=1,  y1=0.5,
+								default.units="native",
+								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="square"))
+					}
+					grid.segments(x0=0.2, y0=0.5, x1=0.8,  y1=0.5,
+							default.units="native",
+							gp=gpar(col=col.gap, alpha=alpha, lwd=lwd*1))#, lineend="square"))
+					
+				}
+				else #no gap
+				{
+					if(i %in% HRanges)
+					{
+						grid.segments(x0=0, y0=0.5, x1=1,  y1=0.5,
+								default.units="native",
+								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="square"))
+					}
+					else
+					{
+						grid.segments(x0=0, y0=0.5, x1=1,  y1=0.5,
+								default.units="native",
+								gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="square"))
+				
+					}
+				}
+				popViewport(1)
+				
+			}
+			tck<-coord2ext(tckTmp,refScale)
+		}
 		
-		#draw the axis
-		grid.segments(x0=minBase, y0=0.5, x1=maxBase,  y1=0.5,
-		default.units="native",
-		gp=gpar(col=color, alpha=alpha, lwd=lwd*2))
+		
+		
+		
+		else
+		{
+			axRange<-c(as.numeric(minBase),as.numeric(maxBase))
 
-		#vertical ticks
+			#draw the axis
+			grid.segments(x0=minBase, y0=0.5, x1=maxBase,  y1=0.5,
+			default.units="native",
+			gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="square"))
 
-		#Get label position (relative to the axis)
-		labelPos <- match.arg(labelPos, c("alternating", "revAlternating", "above", "below", "beside"))
-		#Get the optimal ticks number and coordinates
-		tck <- Gviz:::.ticks(axRange)
-		tck <- tck[tck<axRange[2]-pxOff*2 & tck>axRange[1]+pxOff*2]
+			#vertical ticks
+
+			#Get label position (relative to the axis)
+			labelPos <- match.arg(labelPos, c("alternating", "revAlternating", "above", "below", "beside"))
+			#Get the optimal ticks number and coordinates
+			tck <- Gviz:::.ticks(axRange)
+			tck <- tck[tck<axRange[2]-pxOff*2 & tck>axRange[1]+pxOff*2]
+			tckText <- tck
+			label<-as.character(tckText)
+		}
+		if(length(GdObject) && is.null(refScale))
+		{
+			rcolor <- Gviz:::.dpOrDefault(GdObject, "col.range", "black")
+			diff <- Gviz:::.pxResolution(coord="x")
+			#GdObject <- collapseTrack(GdObject, diff=diff, xrange=c(minBase, maxBase))
+			start(GdObject) <- pmax(axRange[1], start(GdObject))
+			end(GdObject) <- pmin(axRange[2], end(GdObject))
+			coords <- cbind(start(GdObject), -0.1, end(GdObject), 0.1)
+			y0t<-y1t<-rep(0.5,length(start(GdObject)))
+			grid.segments(x0=start(GdObject),x1=end(GdObject),y0=y0t,y1=y1t,
+					default.units="native",
+					gp=gpar(col=rcolor,alpha=alpha,lwd=lwd*2, lineend="square"))
+			vals <- values(GdObject)
+#			if(showIds)
+#				grid.text(ids, x=start(GdObject) + width(GdObject)/2, y=0,
+#						gp=gpar(col=rcol, cex=rcex, fontface=fontface),
+#						default.units="native", just=c("center", "center"))
+			## Calculate the coordinates for the image map
+			map <- as.matrix(Gviz:::.getImageMap(coords))
+			rownames(map) <- paste("region", seq_len(nrow(map)), sep="_")
+			tags <- lapply(list(title=rownames(map), start=as.character(start(GdObject)), end=as.character(end(GdObject))),
+					function(x){ names(x) <- rownames(map); x})
+			#imageMap(GdObject) <- Gviz:::ImageMap(coords=map, tags=tags) 
+		}
 		y0t <- rep(c(0.5), length(tck))[1:length(tck)]
 		y1t <- y0t + rep(c(tickHeight, -tickHeight), length(tck))[1:length(tck)]
 		y0t <- switch(labelPos, "alternating"=y0t, "revAlternating"=-y0t, "above"=abs(y0t), "below"=-abs(y0t), "beside"=y0t)
 		y1t <- switch(labelPos, "alternating"=y1t, "revAlternating"=-y1t, "above"=abs(y1t), "below"=-abs(y1t), "beside"=y1t)
 		grid.segments(x0=tck, x1=tck, y0=y0t, y1=y1t,  default.units="native", gp=gpar(col=color, alpha=alpha, lwd=lwd, lineend="square"))
 		
-		tckText <- tck
-		label<-as.character(tckText)
 		ylabs<-(y1t-0.5)*3+0.5
 		ylabs <- y1t + (ifelse(y1t>0.5, 1, -1) * (textYOff + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex))
 		grid.text(label=label, x=tck, y=ylabs, just=c("centre", "centre"),
