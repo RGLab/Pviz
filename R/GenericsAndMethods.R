@@ -49,6 +49,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 			GdObject <- subset(GdObject, from=minBase, to=maxBase)
 		}
 		
+		if(minBase==0){minBase<-1}
 		indexVec<-which(ProbeStart(GdObject)[[1]]+15>minBase & ProbeStart(GdObject)[[1]]<maxBase)
 		
 		ProbeStart(GdObject)[[1]]<-ProbeStart(GdObject)[[1]][indexVec]
@@ -124,7 +125,6 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 						pushViewport(viewport(y=0, height=unit(lSpace, "inches"), just=c(0.5, 0),
 										gp=gpar(cex=cex, fontsize=fontsize, fontface=fontface, fontcolor=fontcolor)))#,
 												#lineheight=lineheight)))
-						#grid.rect(gp=gpar(col="green"))
 						pushViewport(viewport(width=unit(1, "npc") - unit(0.1, "inches"), height=unit(1, "npc") - unit(0.1, "inches")))
 
 						boxSize <- getPar(GdObject, ".__boxSize")
@@ -178,7 +178,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 			}
 
 		### TRACK
-		pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))#,clip=TRUE))
+		pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))
 		for(curR in 1:totalRows)
 		{
 			curProbName<-names(probeStart)[curR]
@@ -271,12 +271,11 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 		return(invisible(GdObject))
 	}
 	
-	
 	### DRAWING MODE	
 	cex<-getPar(GdObject,"cex")
 	color<-getPar(GdObject,"fontcolor")
-	len <- (maxBase-minBase + 1)
-	
+	len<-nchar(seq)
+			
 	#print each char of the sequence
 	for(cnt in 1:len)
 	{
@@ -298,7 +297,6 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 
 setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...) 
 {
-	#if(minBase==0) {minBase<-1}
 	pushViewport(dataViewport(xData=c(minBase, maxBase), yscale=c(0, 1), extension=0))
 	cex <- Gviz:::.dpOrDefault(GdObject, "cex", 0.8)
 	labelPos <- Gviz:::.dpOrDefault(GdObject, "labelPos", "alternating")
@@ -343,11 +341,13 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		if(!is.null(refScale))
 		{
 			axRange<-c(refScale[minBase],refScale[maxBase])
+			if(length(axRange)==1){axRange<-c(1, axRange)}
 			col.gap <- Gviz:::.dpOrDefault(GdObject,"col.gap","black")
 			col.range <- Gviz:::.dpOrDefault(GdObject,"col.range","black")
 			len <- (maxBase-minBase + 1)
 			
 			tckTmp<-Gviz:::.ticks(axRange)
+			tckTmp <- tckTmp[tckTmp<axRange[2]-pxOff*2 & tckTmp>axRange[1]+pxOff*2]
 			label<-as.character(tckTmp)
 			tck<-numeric(0)
 			
@@ -373,26 +373,32 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 				{
 					if(i %in% HRanges)
 					{
-						grid.segments(x0=0, y0=0.5, x1=1,  y1=0.5,
+						ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0)
+						ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-1)
+						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
 								default.units="native",
 								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="square"))
 					}
-					grid.segments(x0=0.2, y0=0.5, x1=0.8,  y1=0.5,
+					ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0.2)
+					ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-0.8)
+					grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
 							default.units="native",
 							gp=gpar(col=col.gap, alpha=alpha, lwd=lwd*1))#, lineend="square"))
 					
 				}
 				else #no gap
 				{
+					ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0)
+					ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-1)
 					if(i %in% HRanges)
 					{
-						grid.segments(x0=0, y0=0.5, x1=1,  y1=0.5,
+						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
 								default.units="native",
 								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="square"))
 					}
 					else
 					{
-						grid.segments(x0=0, y0=0.5, x1=1,  y1=0.5,
+						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
 								default.units="native",
 								gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="square"))
 				
