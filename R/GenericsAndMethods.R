@@ -274,8 +274,7 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 	### DRAWING MODE	
 	cex<-getPar(GdObject,"cex")
 	color<-getPar(GdObject,"fontcolor")
-	len<-nchar(seq)
-			
+	len<-nchar(seq)	
 	#print each char of the sequence
 	for(cnt in 1:len)
 	{
@@ -342,7 +341,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		{
 			axRange<-c(refScale[minBase],refScale[maxBase])
 			if(length(axRange)==1){axRange<-c(1, axRange)}
-			col.gap <- Gviz:::.dpOrDefault(GdObject,"col.gap","black")
+			col.gap <- Gviz:::.dpOrDefault(GdObject,"col.gap","gray")
 			col.range <- Gviz:::.dpOrDefault(GdObject,"col.range","black")
 			len <- (maxBase-minBase + 1)
 			
@@ -351,12 +350,14 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			label<-as.character(tckTmp)
 			tck<-numeric(0)
 			
+			## FIXME for faster computation make the regions (highlight/normal/gap) and then draw one segment per region
 			#Change the @range to plot the highlighted regions properly
 			HRanges<-c()
 			if(length(GdObject))
 			{
-				end(GdObject)<-coord2ext(end(GdObject),refScale)
-				start(GdObject)<-coord2ext(start(GdObject),refScale)
+#				#Translate into ref coord
+#				end(GdObject)<-coord2ext(end(GdObject),refScale)
+#				start(GdObject)<-coord2ext(start(GdObject),refScale)
 				for(r in 1:length(GdObject))
 				{
 					HRanges<-c(HRanges, seq(start(GdObject)[r],end(GdObject)[r]))
@@ -543,21 +544,21 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 .parMappings <- NULL
 
 
-## Compute pretty tickmark location (code from tilingArray package)
-## Arguments:
-##    o x: a vector of data values
-## Value: the tick mark coordinates
-.ticks <- function(x){
-	rx <- range(x)
-	lz <- log((rx[2]-rx[1])/3, 10)
-	fl <- floor(lz)
-	if( lz-fl > log(5, 10))
-		fl <- fl +  log(5, 10)
-	tw <- round(10^fl)
-	i0 <- ceiling(rx[1]/tw)
-	i1 <- floor(rx[2]/tw)
-	seq(i0, i1)*tw
-}
+### Compute pretty tickmark location (code from tilingArray package)
+### Arguments:
+###    o x: a vector of data values
+### Value: the tick mark coordinates
+#.ticks <- function(x){
+#	rx <- range(x)
+#	lz <- log((rx[2]-rx[1])/3, 10)
+#	fl <- floor(lz)
+#	if( lz-fl > log(5, 10))
+#		fl <- fl +  log(5, 10)
+#	tw <- round(10^fl)
+#	i0 <- ceiling(rx[1]/tw)
+#	i1 <- floor(rx[2]/tw)
+#	seq(i0, i1)*tw
+#}
 
 #############################
 ##  Add the scale conversion to plotTracks.

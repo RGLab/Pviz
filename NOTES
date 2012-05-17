@@ -1,0 +1,11 @@
+#To plot aligned stuff
+#Get extended/reference scale
+alignObj<-readAlign(filename)
+refScale<-alignObj[[1]]
+refSeq<-alignObj[[2]]
+
+
+#The user trsform datas prior to the track construction and use extended coordinates in plotTracks
+ProbeTrack needs a sequence with inserted gaps and converted positions
+DTrack needs converted positions
+ATrack needs HivFeatures retrieved using the refScale in loadFeature()

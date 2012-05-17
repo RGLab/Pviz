@@ -1,12 +1,12 @@
 ###
 # Read alignment from fasta file to get scales and sequences
 ###
-readAlign<-function(fileName)
+readAlign<-function(fileName=NULL)
 {
 	## EASY MODE:
 	## Assume first line is >HXB2, second is hxb2 seq, third is >newSeqID,  fourth is newSeq seq
-	path<-"/home/rsautera/Desktop/peptide_microarray/simpleAlign.fasta"
-    alFile<-file(path,open="r")
+	if(is.null(filename)){filename<-"/home/rsautera/Desktop/peptide_microarray/simpleAlign.fasta"}
+    alFile<-file(filename,open="r")
 	lineList<-list()
 	lineCnt<-1
 	while(length(oneLine <- readLines(alFile, n = 4, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
@@ -41,7 +41,7 @@ setGeneric("coord2ext", def=function(obj, refScale) standardGeneric("coord2ext")
 
 setMethod("coord2ext", signature=(obj="numeric"), function(obj, refScale)
 {
-	#works for both vectors and integers
+	#works for both vectors and integers			
 	return(unlist(sapply(obj, function(x){min(which(refScale==x))})))
 })
 			
