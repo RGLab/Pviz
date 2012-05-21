@@ -542,23 +542,3 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
         assignInNamespace(x=".parMappings", value=defs, ns="Pviz")
 }
 .parMappings <- NULL
-
-
-### Compute pretty tickmark location (code from tilingArray package)
-### Arguments:
-###    o x: a vector of data values
-### Value: the tick mark coordinates
-#.ticks <- function(x){
-#	rx <- range(x)
-#	lz <- log((rx[2]-rx[1])/3, 10)
-#	fl <- floor(lz)
-#	if( lz-fl > log(5, 10))
-#		fl <- fl +  log(5, 10)
-#	tw <- round(10^fl)
-#	i0 <- ceiling(rx[1]/tw)
-#	i1 <- floor(rx[2]/tw)
-#	seq(i0, i1)*tw
-#}
-
-#############################
-##  Add the scale conversion to plotTracks.

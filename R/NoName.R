@@ -1,7 +1,7 @@
 ###
 # Read alignment from fasta file to get scales and sequences
 ###
-readAlign<-function(fileName=NULL)
+readAlign<-function(filename=NULL)
 {
 	## EASY MODE:
 	## Assume first line is >HXB2, second is hxb2 seq, third is >newSeqID,  fourth is newSeq seq
@@ -34,6 +34,114 @@ readAlign<-function(fileName=NULL)
 	refObj[[3]]<-newSeq
 	return(refObj)
 }
+
+
+makeDB<-function(filename=NULL)
+{
+	tt1<-system.time(0)
+	tt2<-system.time(0)
+
+	mainDF<-data.frame()
+	if(is.null(filename)){filename<-"/home/rsautera/Desktop/peptide_microarray/newMuscleMultipleAlignment.fasta"}
+	alFile<-file(filename,open="r")
+	lineList<-list()
+	lineCnt<-1
+	while(length(oneLine <- readLines(alFile, n = 4, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
+	{
+		lineList<-c(lineList,oneLine)
+	}
+	close(alFile) #
+	refSeq<-lineList[2] #We assume that the reference sequence is the first on the alignment
+	len<-nchar(refSeq)
+	gapCnt<-0
+	refScale<-numeric(len)
+	for(i in 1:len)
+	{
+		if(substr(refSeq,i,i)=="-")
+		{
+			gapCnt<-gapCnt+1
+		}
+		refScale[i]<-i-gapCnt
+	}
+	
+	lCnt<-3 #no need to loop on the ref
+	tt1<-system.time(
+				
+	while(lCnt < length(lineList))
+	{
+		seqTmp<-lineList[lCnt+1]#seq with gaps
+			peptide<-c()
+			aligned<-c()
+			trimmed<-c()
+			reference<-c()
+			
+			len<-nchar(seqTmp)
+			gapCnt<-0
+			gapTrimCnt<-0
+			seqNoGap<-c()  #seq with no gaps
+			seqTrimmed<-c()#seq with no insertions
+			tmpScale<-numeric(len)
+			for(i in 1:len)
+			{
+				if(substr(seqTmp,i,i)=="-")
+				{
+					gapCnt<-gapCnt+1
+				}
+				else
+				{
+					seqNoGap<-c(seqNoGap,substr(seqTmp,i,i))
+				}
+				tmpScale[i]<-i-gapCnt
+			}
+			#Aligned sequence
+			seqNoGap<-paste(seqNoGap,collapse="")
+			startNGList<-seq(1,nchar(seqNoGap)-15,3)
+			endNGList<-startNGList+14
+			#Peptide
+			startList<-coord2ext(startNGList,tmpScale)
+			endList<-coord2ext(endNGList,tmpScale)
+			for(i in 1:length(startList))
+			{
+				peptide<-c(peptide, substr(seqNoGap,startNGList[i],endNGList[i]))
+				aligned<-c(aligned, substr(seqTmp,startList[i],endList[i]))
+				reference<-c(reference, substr(refSeq, startList[i],endList[i]))
+			}
+
+			#for each seq in aligned
+			for(seqCnt in 1:length(aligned))
+			{
+				trimmedS<-c()
+				#for each AA in the seq
+				for(AACnt in 1:nchar(aligned[seqCnt]))
+				{
+					if(substr(reference[seqCnt],AACnt,AACnt)!="-")
+					{
+						trimmedS<-c(trimmedS,substr(aligned[seqCnt],AACnt,AACnt))
+					}
+				}
+				trimmed<-c(trimmed,paste(trimmedS,collapse=""))
+			}
+#			browser()
+			#create a data.frame object to store the infos for this sequence
+			dfTmp<-data.frame(start=startList,end=endList,aligned,trimmed,reference,peptide)
+			mainDF<-rbind(mainDF,dfTmp)#append the data.frames
+			
+		lCnt<-lCnt+2
+	})
+	#{---------->
+	mainDF<-aggregate(mainDF,by=list(mainDF$peptide),FUN=function(x) x[1]) #remove duplicates
+	mainDF<-mainDF[with(mainDF, order(start)),] #sort the big data.frame
+	ir<-IRanges(start=mainDF[["start"]],end=mainDF[["end"]])
+	alignObject<-RangedData(ir,aligned=mainDF[["aligned"]],trimmed=mainDF[["trimmed"]])
+	rownames(alignObject)<-mainDF[["peptide"]]
+	#----------->} ~10s
+	print(tt1)
+	print(tt2)
+	return(alignObject)
+	
+}#end makeDB
+
+
 
 
 ## Convert the coordinates of an object into a given scale

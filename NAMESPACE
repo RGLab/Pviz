@@ -4,5 +4,6 @@ exportClasses("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack")
 export("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack",
 		"coord2ext",
 		"readAlign",
-		"insertGaps")
+		"insertGaps",
+		"makeDB")
 export("plotTracks")
