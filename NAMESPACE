@@ -5,5 +5,5 @@ export("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack",
 		"coord2ext",
 		"readAlign",
 		"insertGaps",
-		"makeDB")
+		"convertDB")
 export("plotTracks")

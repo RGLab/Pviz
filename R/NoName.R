@@ -35,7 +35,12 @@ readAlign<-function(filename=NULL)
 	return(refObj)
 }
 
-
+###
+# Create a database object from a multiple alignment fasta file
+# Input : Fasta file with the reference
+#           The first sequence should be the reference HXB2
+#           The following 7 sequences should be the subtypes A,B,C,D,M,CRF01,CRF02 (in no specific order)
+###
 makeDB<-function(filename=NULL)
 {
 	tt1<-system.time(0)
@@ -44,13 +49,9 @@ makeDB<-function(filename=NULL)
 	mainDF<-data.frame()
 	if(is.null(filename)){filename<-"/home/rsautera/Desktop/peptide_microarray/newMuscleMultipleAlignment.fasta"}
 	alFile<-file(filename,open="r")
-	lineList<-list()
-	lineCnt<-1
-	while(length(oneLine <- readLines(alFile, n = 4, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
-	{
-		lineList<-c(lineList,oneLine)
-	}
+	lineList<-readLines(alFile, n=16) #16 lines, i.e ref+7 subtypes
 	close(alFile) #
+	
 	refSeq<-lineList[2] #We assume that the reference sequence is the first on the alignment
 	len<-nchar(refSeq)
 	gapCnt<-0
@@ -65,10 +66,11 @@ makeDB<-function(filename=NULL)
 	}
 	
 	lCnt<-3 #no need to loop on the ref
-	tt1<-system.time(
 				
+	print(length(lineList))
 	while(lCnt < length(lineList))
 	{
+		print(lCnt)
 		seqTmp<-lineList[lCnt+1]#seq with gaps
 			peptide<-c()
 			aligned<-c()
@@ -127,7 +129,7 @@ makeDB<-function(filename=NULL)
 			mainDF<-rbind(mainDF,dfTmp)#append the data.frames
 			
 		lCnt<-lCnt+2
-	})
+	}
 	#{---------->
 	mainDF<-aggregate(mainDF,by=list(mainDF$peptide),FUN=function(x) x[1]) #remove duplicates
 	mainDF<-mainDF[with(mainDF, order(start)),] #sort the big data.frame
@@ -135,12 +137,97 @@ makeDB<-function(filename=NULL)
 	alignObject<-RangedData(ir,aligned=mainDF[["aligned"]],trimmed=mainDF[["trimmed"]])
 	rownames(alignObject)<-mainDF[["peptide"]]
 	#----------->} ~10s
-	print(tt1)
-	print(tt2)
 	return(alignObject)
 	
 }#end makeDB
 
+
+#convertDB? Change pos/aligned/trimmed
+convertDB<-function(db=pep_hxb2,filename=NULL,refScale=NULL)
+{
+	## Read the file
+	if(is.null(filename)){filename<-"/home/rsautera/Desktop/peptide_microarray/newMuscleMultipleAlignment.fasta"}
+	alFile<-file(filename,open="r")
+	lineList<-readLines(alFile, n=16) #16 lines, i.e ref+7 subtypes
+	close(alFile) #
+	
+	refSeq<-lineList[2]
+	len<-nchar(refSeq)
+	gapCnt<-0
+	
+	##Get the refScale if needed
+	if(is.null(refScale))
+	{
+		refScale<-numeric(len)
+		for(i in 1:len)
+		{
+			if(substr(refSeq,i,i)=="-")
+			{
+				gapCnt<-gapCnt+1
+			}
+			refScale[i]<-i-gapCnt
+		}
+	}
+
+	##Create the 7 subtype lists
+	lCnt<-3 #no need to loop on the reference
+	sTypeIDList<-character()
+	sTypeSeq<-numeric()
+	while(lCnt < length(lineList))
+	{
+		sType<-gsub("> ","",lineList[lCnt])
+		sTypeIDList<-c(sTypeIDList,sType)
+		sTypeSeq<-c(sTypeSeq,lineList[lCnt+1])
+		lCnt<-lCnt+2
+	}
+	sTypeList<-list(sTypeIDList,sTypeSeq)
+	print(sTypeList)
+
+	##Convert the positions of the db
+	ndb<-coord2ext(db,refScale)
+
+	t1<-system.time({
+
+	##Get the aligned sequence
+	aligned<-reference<-character(length(rownames(ndb)))
+	for(ID in sTypeIDList)
+	{
+		TFvec<-ndb[[ID]]
+		idx<-which(TFvec==TRUE)
+		newAligns<-sapply(idx, function(x){
+					substr(sTypeSeq[which(sTypeIDList==ID)],start(ndb)[x],end(ndb)[x])
+				})
+		aligned[idx]<-newAligns
+		
+		newRef<-sapply(idx, function(x){
+					substr(refSeq,start(ndb)[x],end(ndb)[x])
+				})
+		reference[idx]<-newRef
+	}
+
+	##Get the trimmed sequence
+	trimmed<-c()
+	for(seqCnt in 1:length(aligned))
+	{
+		trimmedS<-c()
+		for(AACnt in 1:nchar(aligned[seqCnt]))
+		{
+			if(substr(reference[seqCnt],AACnt,AACnt)!="-")
+			{
+				trimmedS<-c(trimmedS,substr(aligned[seqCnt],AACnt,AACnt))
+			}
+		}
+		trimmed<-c(trimmed,paste(trimmedS,collapse=""))
+	}
+						
+	})#end t1
+
+	##Set the values for the new db
+	ndb$aligned<-aligned
+	ndb$trimmed<-trimmed
+	print(t1)
+	return(ndb)
+}
 
 
 
