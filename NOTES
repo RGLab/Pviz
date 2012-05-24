@@ -16,4 +16,4 @@ ndb<-convertDB(pep_hxb2,alignFile)
 
 
 #makeDB and insertGaps are probably obsolete because of convertDB
-
+#The Axis tracks plots weird when there is no DTrack/ATrack and to= is not specified

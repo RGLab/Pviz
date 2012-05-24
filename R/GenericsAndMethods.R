@@ -60,7 +60,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 		sequence<-ProbeSequence(GdObject)
 		intensity<-ProbeIntensity(GdObject)
 		
-		defIntensityRange<-c(min(GdObject@intensity[[1]]),max(GdObject@intensity[[1]]))
+		defIntensityRange<-c(min(GdObject@intensity[[1]]),max(GdObject@intensity[[1]],1))
 		range.legend<-Gviz:::.dpOrDefault(GdObject, "ylim", defIntensityRange)
 		
 		totalRows<-length(probeStart)
@@ -261,6 +261,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBase, maxBase, vpPosition, prepare=FALSE, subset=TRUE) 
 {
 	seq<-getSequenceSeq(GdObject)
+	if(maxBase-minBase<1){ maxBase<-nchar(seq)}
 	seq<-substr(seq,minBase,maxBase)
 	pushViewport(dataViewport(xData=c(minBase, maxBase), yscale=c(0, 1), extension=0))
 	
@@ -296,6 +297,10 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 
 setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...) 
 {
+	if((maxBase-minBase)==0)
+		return(invisible(GdObject))
+	if(subset)
+		GdObject <- subset(GdObject, from=minBase, to=maxBase)
 	pushViewport(dataViewport(xData=c(minBase, maxBase), yscale=c(0, 1), extension=0))
 	cex <- Gviz:::.dpOrDefault(GdObject, "cex", 0.8)
 	labelPos <- Gviz:::.dpOrDefault(GdObject, "labelPos", "alternating")
@@ -339,12 +344,14 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		#For reference coordinates system
 		if(!is.null(refScale))
 		{
-			axRange<-c(refScale[minBase],refScale[maxBase])
+			minB<-refScale[as.numeric(minBase)]
+			maxB<-min(refScale[as.numeric(maxBase)],refScale[length(refScale)], na.rm=TRUE)
+			axRange<-c(minB,maxB)
 			if(length(axRange)==1){axRange<-c(1, axRange)}
 			col.gap <- Gviz:::.dpOrDefault(GdObject,"col.gap","gray")
 			col.range <- Gviz:::.dpOrDefault(GdObject,"col.range","black")
 			len <- (maxBase-minBase + 1)
-			
+
 			tckTmp<-Gviz:::.ticks(axRange)
 			tckTmp <- tckTmp[tckTmp<axRange[2]-pxOff*2 & tckTmp>axRange[1]+pxOff*2]
 			label<-as.character(tckTmp)
@@ -417,7 +424,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		else
 		{
 			axRange<-c(as.numeric(minBase),as.numeric(maxBase))
-
 			#draw the axis
 			grid.segments(x0=minBase, y0=0.5, x1=maxBase,  y1=0.5,
 			default.units="native",

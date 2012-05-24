@@ -5,7 +5,7 @@ readAlign<-function(filename=NULL)
 {
 	## EASY MODE:
 	## Assume first line is >HXB2, second is hxb2 seq, third is >newSeqID,  fourth is newSeq seq
-	if(is.null(filename)){filename<-"/home/rsautera/Desktop/peptide_microarray/simpleAlign.fasta"}
+	if(is.null(filename)){filename<-"/home/rsautera/Desktop/peptide_microarray/newMuscleMultipleAlignment.fasta"}
     alFile<-file(filename,open="r")
 	lineList<-list()
 	lineCnt<-1
@@ -237,7 +237,9 @@ setGeneric("coord2ext", def=function(obj, refScale) standardGeneric("coord2ext")
 setMethod("coord2ext", signature=(obj="numeric"), function(obj, refScale)
 {
 	#works for both vectors and integers			
-	return(unlist(sapply(obj, function(x){min(which(refScale==x))})))
+	return(unlist(sapply(obj, function(x){
+								min(which(refScale==x))#,length(refScale)+x-length(refScale))
+							})))
 })
 			
 setMethod("coord2ext", signature=(obj="RangedData"), function(obj, refScale)
@@ -257,7 +259,7 @@ setMethod("coord2ext", signature=(obj="RangedData"), function(obj, refScale)
 #  Input: peptideList
 #         refScale
 #         probeStartList
-insertGaps<-function(probeList, probeStartList, refScale)
+insertGaps<-function(probeList, probeStartList, refScale=NULL)
 {
 	#convert the probeStartList into extended system
 	probeStartList<-coord2ext(probeStartList, refScale)
