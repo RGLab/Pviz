@@ -16,7 +16,5 @@ ndb<-convertDB(pep_hxb2,alignFile)
 
 
 #makeDB and insertGaps are probably obsolete because of convertDB
-#The Axis tracks plots weird when there is no DTrack/ATrack and to= is not specified
-# -> it's consistent with Gviz's behaviour
-#    however I may need to change that if we want to plot only PATrack/SeqTrack/ProbeTrack (which is still stupid because unless the sequence is really small, SeqTrack and ProbeTrack information won't be readable)
 #Warnings on DB load
+

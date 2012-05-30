@@ -27,7 +27,7 @@ setReplaceMethod("ProbeSequence", "ProbeTrack", function(obj, value){
 		})
 
 setMethod("start", "ProbeTrack", function(x) if(length(x)) as.integer(ProbeStart(x)[[1]]) else NULL)
-setMethod("end", "ProbeTrack", function(x) if(length(x)) as.integer(ProbeStart(x)[[1]])+15 else NULL)
+setMethod("end", "ProbeTrack", function(x) start(x))
 
 #HivFeature Accessors
 setGeneric("getHivFeatureSeq", def=function(HIVF) standardGeneric("getHivFeatureSeq"))
@@ -39,8 +39,6 @@ setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
 #ProteinAxisTrack Accessors
 setGeneric("getNC", def=function(obj) standardGeneric("getNC"))
 setMethod("getNC", def=function(obj) obj@addNC)
-
-#SequenceTrack Accessors
 
 ####
 ## drawGD for ProbeTrack
@@ -266,8 +264,16 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBase, maxBase, vpPosition, prepare=FALSE, subset=TRUE) 
 {
 	seq<-getSequenceSeq(GdObject)
-	if(maxBase-minBase<1){ maxBase<-nchar(seq)}
+	lenSeq<-nchar(seq)
+	if(maxBase-minBase<1){ maxBase<-lenSeq}
 	seq<-substr(seq,minBase,maxBase)
+	if(maxBase>lenSeq)
+	{
+		print(c(maxBase,nchar(seq)))
+		endSpace<-rep(" ", maxBase-lenSeq)
+		endSpace<-paste(endSpace,collapse="")
+		seq<-paste(seq,endSpace,sep="")
+	}
 	pushViewport(dataViewport(xData=c(minBase, maxBase), yscale=c(0, 1), extension=0))
 	
 	### PREPARE MODE
@@ -298,8 +304,6 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 ####
 ## drawGD for ProteinAxisTrack
 ####
-
-
 setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...) 
 {
 	if((maxBase-minBase)==0)
@@ -377,12 +381,19 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			}
 			for(i in minBase:maxBase)
 			{
+#				if(i>length(refScale))
+#				{
+#					errMsg<-cat("The end of the plot (",maxBase,") is bigger than the length of the aligned sequence (",length(refScale),").\nSet the argument 'to' to a maximum of ",length(refScale)," when using plotTracks.\n",sep="")
+#					stop(errMsg)
+#				}
 				vpAxisPos<-viewport(x=(1/(len-1))*(i-minBase),
 						width=1/(len-1))
 				pushViewport(vpAxisPos)
 
+				if(i>length(refScale))
+				{}
 				#Determine if highlighted region
-				if(i>1 && refScale[i]==refScale[i-1]) #gap
+				else if(i>1 && refScale[i]==refScale[i-1]) #gap
 				{
 					if(i %in% HRanges)
 					{
