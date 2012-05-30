@@ -26,6 +26,9 @@ setReplaceMethod("ProbeSequence", "ProbeTrack", function(obj, value){
 			return(obj)
 		})
 
+setMethod("start", "ProbeTrack", function(x) if(length(x)) as.integer(ProbeStart(x)[[1]]) else NULL)
+setMethod("end", "ProbeTrack", function(x) if(length(x)) as.integer(ProbeStart(x)[[1]])+15 else NULL)
+
 #HivFeature Accessors
 setGeneric("getHivFeatureSeq", def=function(HIVF) standardGeneric("getHivFeatureSeq"))
 setMethod("getHivFeatureSeq", def=function(HIVF) as.character(HIVF@HIV_db$hxb2AA[1,]))
@@ -36,6 +39,8 @@ setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
 #ProteinAxisTrack Accessors
 setGeneric("getNC", def=function(obj) standardGeneric("getNC"))
 setMethod("getNC", def=function(obj) obj@addNC)
+
+#SequenceTrack Accessors
 
 ####
 ## drawGD for ProbeTrack

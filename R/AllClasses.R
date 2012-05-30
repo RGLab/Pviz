@@ -134,7 +134,7 @@ ProbeTrack <- function(sequence, intensity, probeStart, protein=NULL, name="Prob
 # Track for the amino acid sequence of the reference
 ###
 setClass("SequenceTrack",
-		contains="GdObject",
+		contains="RangeTrack",
 		representation(
 				sequence="character"),
 		prototype(
@@ -143,17 +143,20 @@ setClass("SequenceTrack",
 		)
 )
 
-setMethod("initialize", "SequenceTrack", function(.Object, sequence, name, ...)
+setMethod("initialize", "SequenceTrack", function(.Object, sequence, ...)#name, ...)
 {
 	.makeParMapping()
+	#.Object <- Gviz:::.updatePars(.Object, "SequenceTrack")
 	.Object@sequence<-sequence
-	.Object@name<-name
+	#.Object@name<-name
 	.Object <- callNextMethod()
+  return(.Object)
 })
 
 ## SequenceTrack constructor
-SequenceTrack<-function(anno=NULL, sequence=NULL, name="Sequence", ...)
+SequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, name="Sequence", chromosome="chrR", genome="gen", ...)
 {
+	#chr and genome are needded to use methods inherited from RangeTrack
 	if(!is.null(anno))
 	{	
 		#Get the sequence from HivFeature object
@@ -163,7 +166,13 @@ SequenceTrack<-function(anno=NULL, sequence=NULL, name="Sequence", ...)
 	{
 		stop("A sequence or HivFeature object should be supplied")
 	}
-	new("SequenceTrack", sequence=sequence, name=name, ...)
+  if(is.null(range) || !is(range, "GRAnges"))
+  {
+    if(is.null(start)){start<-1}
+    if(is.null(end)){end<-nchar(sequence)}
+    range<-GRanges(range=IRanges(start=start, end=end), seqnames=chromosome)
+  }
+	new("SequenceTrack", sequence=sequence, name=name, range=range, chromosome=chromosome, genome=genome, ...)
 }
 
 
@@ -191,13 +200,6 @@ setMethod("initialize", "ProteinAxisTrack", function(.Object, addNC, name, ...)
 			
 })
 		
-#		
-### ProteinAxisTrack constructor
-#ProteinAxisTrack<-function(range=NULL, name="Axis", addNC=FALSE, id=NULL, ...)
-#{
-#	new("ProteinAxisTrack", range=range, name=name, addNC=addNC, id=id...)
-#}
-
 
 ## ProteinAxisTrack constructor
 ProteinAxisTrack<-function(range=NULL, name="Axis", addNC=FALSE, id=NULL, ...)
