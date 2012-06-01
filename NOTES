@@ -17,4 +17,6 @@ ndb<-convertDB(pep_hxb2,alignFile)
 
 #makeDB and insertGaps are probably obsolete because of convertDB
 #Warnings on DB load
+#pb with littleTicks with coord < minBase on ref
 
+#Check only once !is.null(refScale)

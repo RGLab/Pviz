@@ -269,7 +269,6 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 	seq<-substr(seq,minBase,maxBase)
 	if(maxBase>lenSeq)
 	{
-		print(c(maxBase,nchar(seq)))
 		endSpace<-rep(" ", maxBase-lenSeq)
 		endSpace<-paste(endSpace,collapse="")
 		seq<-paste(seq,endSpace,sep="")
@@ -490,11 +489,15 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		grid.text(label=label, x=tck, y=ylabs, just=c("centre", "centre"),
 				gp=gpar(cex=cex, fontface=fontface), default.units="native")
 		
-		
+
 		## The scecond level ticks and labels if necessary
 		lcex <- cex*0.75 #slightly smaller labels
 		if (Gviz:::.dpOrDefault(GdObject, "littleTicks", FALSE) && length(tck)>1)
 		{
+			if(!is.null(refScale))
+			{
+				tck<-as.numeric(label)
+			}
 			avSpace <- min(diff(tck))
 			spaceFac <- 1.8
 			spaceNeeded <- min(as.numeric(convertWidth(stringWidth(if(is.character(label)) label else "000000000"),"native"))/2)*lcex*spaceFac
@@ -520,12 +523,22 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			}
 			endPadding <- pres["x"]*15
 			sel <- ltck > min(tck, axRange+endPadding) & ltck < max(tck, axRange-endPadding)
+			labelRef<-NULL
+			if(!is.null(refScale))
+			{
+				labelRef<-as.character(as.integer(ltck))
+				ltck<-coord2ext(as.integer(ltck),refScale)
+				y1lt<--(y1lt)+1
+			}
 			if(length(ltck[sel]) && min(diff(tck))>nTcks)
 			{
 				grid.segments(x0=ltck[sel], x1=ltck[sel], y0=y0lt[sel], y1=y1lt[sel],  default.units="native",
 						gp=gpar(col=color, alpha=alpha, lwd=lwd, lineend="square"))
 				ltckText <- ltck[sel]
-				llabel<-as.character(as.integer(ltckText))
+				if(is.null(labelRef))
+					llabel<-as.character(as.integer(ltckText))
+				else
+					llabel<-labelRef
 				ytlabs <- y1lt + (ifelse(y1lt>0.5, 1, -1) * (textYOff + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*lcex))
 				if(is.character(label))
 					grid.text(label=llabel, x=ltck[sel], y=ytlabs[sel], just=c("centre", "centre"),
