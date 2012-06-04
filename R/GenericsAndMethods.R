@@ -497,6 +497,8 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			if(!is.null(refScale))
 			{
 				tck<-as.numeric(label)
+				minBase<-coord2ext(minBase,refScale)
+				maxBase<-coord2ext(maxBase,refScale)
 			}
 			avSpace <- min(diff(tck))
 			spaceFac <- 1.8
@@ -528,7 +530,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			{
 				labelRef<-as.character(as.integer(ltck))
 				ltck<-coord2ext(as.integer(ltck),refScale)
-				y1lt<--(y1lt)+1
 			}
 			if(length(ltck[sel]) && min(diff(tck))>nTcks)
 			{
@@ -538,7 +539,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 				if(is.null(labelRef))
 					llabel<-as.character(as.integer(ltckText))
 				else
-					llabel<-labelRef
+					llabel<-labelRef[sel]
 				ytlabs <- y1lt + (ifelse(y1lt>0.5, 1, -1) * (textYOff + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*lcex))
 				if(is.character(label))
 					grid.text(label=llabel, x=ltck[sel], y=ytlabs[sel], just=c("centre", "centre"),
@@ -548,8 +549,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 						grid.text(label=llabel[[i]], x=ltck[sel][i], y=ytlabs[sel][i], just=c("centre", "centre"),
 								gp=gpar(cex=lcex, fontface=fontface), default.units="native")  
 			}
-		}
-		
+		}	
 		
 		
 		#Draw NC ends if needed
