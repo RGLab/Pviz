@@ -11,8 +11,10 @@
 \alias{ProbeSequence,ProbeTrack-method}
 \alias{ProbeStart<-,ProbeTrack-method}
 \alias{ProbeStart,ProbeTrack-method}
+\alias{start,ProbeTrack-method}
+\alias{end,ProbeTrack-method}
 
-\title{Class \code{"ProbeTrack"}}
+\title{Class \code{"ProbeTrack"} and methods}
 \description{
 	A track to display microarray sequences intensity.
 }
@@ -117,6 +119,9 @@ Class \code{"\linkS4class{GdObject}"}, directly.
 		\emph{Usage:}
 		\code{ProbeStart(obj)}
 		}
+	\item{start, end}{\code{signature(obj = "ProbeTrack")}:
+		These functions are aliases for the \code{ProbeStart} method.
+		They are implemented to be consistent with Gviz.}
 	 }
 }
 

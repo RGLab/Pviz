@@ -1,5 +1,3 @@
-##FIXME Gviz classes produce warnings when R CMD INSTALL 
-
 ###
 # DataTrack class with defaulted chromosome/genome
 # @protein: slot for the protein name (label/lengend + subsetting purposes)
@@ -138,23 +136,21 @@ setClass("SequenceTrack",
 		representation(
 				sequence="character"),
 		prototype(
-				dp = DisplayPars(size=0.25 #to keep it closer to a potential Axis
-						)
+				dp = DisplayPars(size=0.25)
 		)
 )
 
-setMethod("initialize", "SequenceTrack", function(.Object, sequence, ...)#name, ...)
+setMethod("initialize", "SequenceTrack", function(.Object, sequence, ...)
 {
 	.makeParMapping()
 	#.Object <- Gviz:::.updatePars(.Object, "SequenceTrack")
 	.Object@sequence<-sequence
-	#.Object@name<-name
 	.Object <- callNextMethod()
   return(.Object)
 })
 
 ## SequenceTrack constructor
-SequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, name="Sequence", chromosome="chrR", genome="gen", ...)
+SequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, name="Sequence", chromosome="chrR", genome="all", ...)
 {
 	#chr and genome are needded to use methods inherited from RangeTrack
 	if(!is.null(anno))
@@ -170,7 +166,7 @@ SequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NU
   {
     if(is.null(start)){start<-1}
     if(is.null(end)){end<-nchar(sequence)}
-    range<-GRanges(range=IRanges(start=start, end=end), seqnames=chromosome)
+    range<-GRanges(IRanges(start=start, end=end), seqnames=chromosome)
   }
 	new("SequenceTrack", sequence=sequence, name=name, range=range, chromosome=chromosome, genome=genome, ...)
 }

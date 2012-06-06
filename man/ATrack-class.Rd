@@ -5,7 +5,7 @@
 \alias{ATrack}
 \alias{initialize,ATrack-method}
 
-\title{Class \code{"ATrack"}}
+\title{Class \code{"ATrack"} and methods}
 \description{
 	A Track to display range annotations.
 }

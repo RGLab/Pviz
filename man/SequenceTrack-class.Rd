@@ -6,7 +6,7 @@
 \alias{drawGD,SequenceTrack-method}
 \alias{initialize,SequenceTrack-method}
 
-\title{Class \code{"SequenceTrack"}}
+\title{Class \code{"SequenceTrack"} and methods}
 \description{
 	A track to display a reference sequence.
 }
@@ -16,20 +16,43 @@
 }
 
 \usage{
-	SequenceTrack(anno = NULL, sequence = NULL, name = "Sequence", ...)
+	SequenceTrack(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, name="Sequence", chromosome="chrR", genome="all", ...)
 }
 
 \arguments{
-	\item{anno}{Object of class \code{\link[HIV.db:HivFeature-class]{"HivFeature"}}.
-		The Sequence to be displayed needs to be the first element of this \code{\link[HIV.db:HivFeature-class]{"HivFeature"}}.
-		It is possible to directl supply a character sequence instead.}
-		
 	\item{sequence}{Object of class \code{"character"}.
 		The sequence to be displayed.}
 		
+	\item{anno}{Object of class \code{\link[HIV.db:HivFeature-class]{"HivFeature"}}.
+		The Sequence to be displayed needs to be the first element of this \code{\link[HIV.db:HivFeature-class]{"HivFeature"}}.
+		It is possible to directl supply a character sequence instead.}	
+		
+	\item{range}{An object of class \code{\linkS4class{IRanges}} or
+    	\code{\linkS4class{GRanges}}, or an object of class \code{data.frame} 
+    	with the two mandatory columns 'start' and 'end' to be coerced into 
+    	an \code{IRanges} object.
+    
+    	Alternatively, the \code{range} argument may be missing, in which
+    	case the relevant information has to be provided as individual
+    	function arguments (see below).}
+
+  \item{start, end}{Integer vectors, giving the start and the end
+    	end coordinates for the individual track items, or their width. Two
+   		of the three need to be specified, and have to be of equal length or
+    	of length one, in which case this value will be recycled. Otherwise,
+    	the usual R recycling rules for vectors do not apply.}
+		
 	\item{name}{Character scalar of the track's name used in the title
    		panel when plotting.}
-   		    
+   		
+    \item{chromosome}{Unused argument of class \code{"character"},
+  		inherited from class \code{\linkS4class{RangeTrack}},
+  		defaulted to "chrR".}
+
+  	\item{genome}{Unused argument of class \code{"character"},
+  		inherited from class \code{\linkS4class{RangeTrack}}, 
+  		defaulted to "all".}
+  	
     \item{\dots}{Additional items which will all be interpreted as further
         display parameters.}
 }
@@ -41,7 +64,13 @@
 \section{Slots}{
   \describe{
     \item{\code{sequence}:}{Object of class \code{"character"},
-    	The sequence itself}
+      The sequence itself}
+    \item{\code{range}:}{Object of class \code{\linkS4class{GRanges}},
+      inherited from class \code{\linkS4class{RangeTrack}}}
+    \item{\code{chromosome}:}{Object of class \code{"character"},
+      inherited from class \code{\linkS4class{RangeTrack}} }
+    \item{\code{genome}:}{Object of class \code{"character"}, 
+      inherited from class \code{\linkS4class{RangeTrack}}}
     \item{\code{dp}:}{Object of class \code{\linkS4class{DisplayPars}},
       inherited from class \code{\linkS4class{GdObject}}}
     \item{\code{name}:}{Object of class \code{"character"}, 
@@ -52,7 +81,8 @@
 }
 
 \section{Extends}{
-Class \code{"\linkS4class{GdObject}"}, directly.
+Class \code{"\linkS4class{RangeTrack}"}, directly.
+Class \code{"\linkS4class{GdObject}"}, by class "RangeTrack", distance 2.
 }
 
 \section{Methods}{
@@ -79,6 +109,8 @@ Renan Sauteraud
 
 
 \seealso{
+  \code{\linkS4class{RangeTrack}}
+  
   \code{\linkS4class{GdObject}}
   
   \code{\linkS4class{DisplayPars}}

@@ -40,6 +40,10 @@ setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
 setGeneric("getNC", def=function(obj) standardGeneric("getNC"))
 setMethod("getNC", def=function(obj) obj@addNC)
 
+
+
+
+##################### drawGD redefinition
 ####
 ## drawGD for ProbeTrack
 ## legend is the scale of intensities
@@ -305,7 +309,8 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 ####
 setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...) 
 {
-	if((maxBase-minBase)==0)
+	if(minBase==0) minBase<-1
+	if((maxBase-minBase)<=0)
 		return(invisible(GdObject))
 	if(subset)
 		GdObject <- subset(GdObject, from=minBase, to=maxBase)
@@ -370,9 +375,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			HRanges<-c()
 			if(length(GdObject))
 			{
-#				#Translate into ref coord
-#				end(GdObject)<-coord2ext(end(GdObject),refScale)
-#				start(GdObject)<-coord2ext(start(GdObject),refScale)
 				for(r in 1:length(GdObject))
 				{
 					HRanges<-c(HRanges, seq(start(GdObject)[r],end(GdObject)[r]))
@@ -380,11 +382,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			}
 			for(i in minBase:maxBase)
 			{
-#				if(i>length(refScale))
-#				{
-#					errMsg<-cat("The end of the plot (",maxBase,") is bigger than the length of the aligned sequence (",length(refScale),").\nSet the argument 'to' to a maximum of ",length(refScale)," when using plotTracks.\n",sep="")
-#					stop(errMsg)
-#				}
 				vpAxisPos<-viewport(x=(1/(len-1))*(i-minBase),
 						width=1/(len-1))
 				pushViewport(vpAxisPos)
@@ -497,8 +494,8 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			if(!is.null(refScale))
 			{
 				tck<-as.numeric(label)
-				minBase<-coord2ext(minBase,refScale)
-				maxBase<-coord2ext(maxBase,refScale)
+#				minBase<-coord2ext(minBase,refScale)
+#				maxBase<-coord2ext(maxBase,refScale)
 			}
 			avSpace <- min(diff(tck))
 			spaceFac <- 1.8
@@ -524,6 +521,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 				y1lt <- c(y1lt, switch(labelPos, "alternating"=y1, "revAlternating"=y1, "above"=abs(y1), "below"=-abs(y1)))
 			}
 			endPadding <- pres["x"]*15
+#			browser()
 			sel <- ltck > min(tck, axRange+endPadding) & ltck < max(tck, axRange-endPadding)
 			labelRef<-NULL
 			if(!is.null(refScale))
@@ -562,18 +560,4 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 	popViewport(1)
 	return(invisible(GdObject))
 })
-
-
-
-
-#####
-### Record the display parameters for each class once
-#####
-.makeParMapping <- function()
-{
-    classes <-  c("ATrack", "DTrack", "ProbeTrack","SequenceTrack","ProteinAxisTrack")
-    defs <-  sapply(classes, function(x) as(getClassDef(x)@prototype@dp, "list"), simplify=FALSE)
-    if(is.null(.parMappings))
-        assignInNamespace(x=".parMappings", value=defs, ns="Pviz")
-}
-.parMappings <- NULL
+######################################## End drawGD

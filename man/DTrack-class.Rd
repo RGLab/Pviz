@@ -5,7 +5,7 @@
 \alias{DTrack}
 \alias{initialize,DTrack-method}
 
-\title{DTrack class and methods}
+\title{Class \code{"DTrack"} and methods}
 \description{
 	A track to display numeric data values along a sequence.
 }

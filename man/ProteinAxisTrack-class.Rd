@@ -15,7 +15,7 @@
 }
 
 \usage{
-ProteinAxisTrack(range = NULL, name = "Axis", addNC = FALSE, ...)
+	ProteinAxisTrack(range=NULL, name="Axis", addNC=FALSE, id=NULL, ...)
 }
 
 
@@ -28,6 +28,10 @@ ProteinAxisTrack(range = NULL, name = "Axis", addNC = FALSE, ...)
 		
 	\item{name}{Character scalar of the track's name used in the title
    		panel when plotting.}
+   		
+   	\item{id}{A character vector of the same length as \code{range}
+   		containing identifiers for the ranges. If missing, the constructor
+   		will try to extract the ids from \code{names(range)}.}
    		    
     \item{\dots}{Additional items which will all be interpreted as further
         display parameters.}
