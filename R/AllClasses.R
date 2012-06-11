@@ -5,7 +5,9 @@
 setClass("DTrack",
     contains="DataTrack",
 	representation=representation(protein="character"),
-	prototype=prototype()
+	prototype=prototype(
+			dp=DisplayPars(ranges.highlight=GRanges())
+	)
 )
 
 setMethod("initialize", "DTrack", function(.Object, protein, ...){

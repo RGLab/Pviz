@@ -45,6 +45,40 @@ setMethod("getNC", def=function(obj) obj@addNC)
 
 ##################### drawGD redefinition
 ####
+## drawGD for DTrack
+## uses DataTrack's drawGD then adds possible highlight regions
+## highlight features?
+## 		alpha / border.color / fill.color / border.size
+####
+setMethod(Gviz:::"drawGD", signature("DTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...)
+{
+	if(!prepare)
+	{
+		#Calculate space an place rectangles on ranges
+		HRanges<- getPar(GdObject, "ranges.highlight")
+		alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
+		color.highlight<- Gviz:::.dpOrDefault(GdObject, "color.highlight", "black")
+		fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
+		if(length(HRanges))
+		{
+			pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))#,clip=TRUE))
+#			browser()
+			
+			for(i in 1:length(HRanges))
+			{
+				grid.rect(x=1/(maxBase-minBase)*(start(HRanges[i])-minBase),
+						width=1/(maxBase-minBase)*width(HRanges[i]), just="left",
+						gp=gpar(col=color.highlight,fill=fill.highlight,alpha=alpha.highlight))
+			}
+			popViewport(1)
+		}
+	}
+	GdObject <- callNextMethod(GdObject,minBase=minBase, maxBase=maxBase, prepare=prepare, subset=subset) #Call the drawGD method of Gviz::DataTrack	
+
+	return(invisible(GdObject))
+})
+
+####
 ## drawGD for ProbeTrack
 ## legend is the scale of intensities
 ####

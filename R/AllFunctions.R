@@ -5,7 +5,8 @@ readAlign<-function(filename=NULL)
 {
 	## EASY MODE:
 	## Assume first line is >HXB2, second is hxb2 seq, third is >newSeqID,  fourth is newSeq seq
-	if(is.null(filename)){filename<-"/home/rsautera/Desktop/peptide_microarray/newMuscleMultipleAlignment.fasta"}
+#	if(is.null(filename)){filename<-"/home/rsautera/Desktop/peptide_microarray/newMuscleMultipleAlignment.fasta"}
+	if(is.null(filename)){filename<-system.file("alignment.fasta", package="Pviz")}
     alFile<-file(filename,open="r")
 	lineList<-list()
 	lineCnt<-1
