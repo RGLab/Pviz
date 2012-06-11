@@ -95,9 +95,11 @@ Renan Sauteraud
 \examples{
 # Object construction
 paxTrack <- ProteinAxisTrack()
+pax2 <- ProteinAxisTrack(addNC=TRUE)
+pax3 <- ProteinAxisTrack(littleTicks=TRUE)
 
 # Plotting
-plotTracks(paxTrack, from=1, to=100)
+plotTracks(c(paxTrack,pax2,pax3), from=1, to=100)
 }
 
 \keyword{classes}

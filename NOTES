@@ -8,6 +8,7 @@ ndb<-convertDB(db=pep_hxb2)
 
 #The user trsform datas prior to the track construction and use extended coordinates in plotTracks
 ProbeTrack uses the sequences from the 'aligned' slot of the db
+All other tracks can be used just as usual
 
 
 

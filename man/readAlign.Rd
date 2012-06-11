@@ -15,7 +15,8 @@
 }
 
 \arguments{
-	\item{filename}{The name of the alignment file used to extract the new information.}
+	\item{filename}{The name of the alignment fasta file used to extract the new information.
+		The first sequence of the fasta file must be the reference.}
 }
 
 \value{

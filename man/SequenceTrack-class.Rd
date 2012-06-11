@@ -16,7 +16,8 @@
 }
 
 \usage{
-	SequenceTrack(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, name="Sequence", chromosome="chrR", genome="all", ...)
+	SequenceTrack(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, 
+	name="Sequence", chromosome="chrR", genome="all", ...)
 }
 
 \arguments{

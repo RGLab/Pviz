@@ -14,7 +14,8 @@
 }
 
 \usage{
-DTrack(range = NULL, start = NULL, end = NULL, width = NULL, data, chromosome = "chrR", strand = "*", genome = "all", name = "DTrack", protein = "prot", ...)
+DTrack(range = NULL, start = NULL, end = NULL, width = NULL, data, chromosome = "chrR", 
+strand = "*", genome = "all", name = "DTrack", protein = "prot", ...)
 }
 
 \arguments{
@@ -138,7 +139,8 @@ Renan Sauteraud
 }
 \examples{
 # Object construction
-dTrack <- DTrack(start=seq(1,1000, len=100), width=10, data=matrix(runif(400), nrow=4), protein="gp120", name="random data")
+dTrack <- DTrack(start=seq(1,1000, len=100), width=10, data=matrix(runif(400), nrow=4),
+protein="gp120", name="random data")
 
 # Plotting
 plotTracks(dTrack)

@@ -14,8 +14,8 @@
 }
 \usage{
 	ATrack(range=NULL, start=NULL, end=NULL, width=NULL, group,
-		id, strand="*", chromosome="chrR", genome="all", stacking="squish", name="ATrack", protein="prot",
-		fun, selectFun, ...)
+		id, strand="*", chromosome="chrR", genome="all", stacking="squish", 
+		name="ATrack", protein="prot", fun, selectFun, ...)
 }
 
 \arguments{
@@ -139,8 +139,10 @@ Renan Sauteraud
 # Object construction
 aTrack<-ATrack(start=c(20,60),end=c(40,100),name="random.anno",id=c("small","big"))
 # Stacking example
-a2Track<-ATrack(start=c(20,30),end=c(40,100),name="stacking=dense",id=c("small","big"),stacking="dense",fill=c("black","orange"))
-a3Track<-ATrack(start=c(20,30),end=c(40,100),name="no stacking",id=c("small","big"),fill=c("black","orange"))
+a2Track<-ATrack(start=c(20,30),end=c(40,100),name="stacking=dense",id=c("small","big"),
+stacking="dense",fill=c("black","orange"))
+a3Track<-ATrack(start=c(20,30),end=c(40,100),name="no stacking",id=c("small","big"),
+fill=c("black","orange"))
 # Plotting
 plotTracks(trackList=c(aTrack,a2Track,a3Track),showFeatureId=TRUE)
 }
