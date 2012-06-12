@@ -41,8 +41,6 @@ setGeneric("getNC", def=function(obj) standardGeneric("getNC"))
 setMethod("getNC", def=function(obj) obj@addNC)
 
 
-
-
 ##################### drawGD redefinition
 ####
 ## drawGD for DTrack
@@ -54,16 +52,15 @@ setMethod(Gviz:::"drawGD", signature("DTrack"), function(GdObject, minBase, maxB
 {
 	if(!prepare)
 	{
-		#Calculate space an place rectangles on ranges
+		#gpar for grid.rect
 		HRanges<- getPar(GdObject, "ranges.highlight")
 		alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
 		color.highlight<- Gviz:::.dpOrDefault(GdObject, "color.highlight", "black")
 		fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
-		lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 2)
+		lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 1)
 		if(length(HRanges))
 		{
-			pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))#,clip=TRUE))
-#			browser()			
+			pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))#,clip=TRUE))		
 			for(i in 1:length(HRanges))
 			{
 				grid.rect(x=1/(maxBase-minBase)*(start(HRanges[i])-minBase-0.5),
@@ -438,7 +435,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 					ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-0.8)
 					grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
 							default.units="native",
-							gp=gpar(col=col.gap, alpha=alpha, lwd=lwd*1))#, lineend="square"))
+							gp=gpar(col=col.gap, alpha=alpha, lwd=lwd*1))
 					
 				}
 				else #no gap
@@ -455,7 +452,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 					{
 						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
 								default.units="native",
-								gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="square"))
+								gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="butt"))
 				
 					}
 				}
@@ -556,7 +553,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 				y1lt <- c(y1lt, switch(labelPos, "alternating"=y1, "revAlternating"=y1, "above"=abs(y1), "below"=-abs(y1)))
 			}
 			endPadding <- pres["x"]*15
-#			browser()
 			sel <- ltck > min(tck, axRange+endPadding) & ltck < max(tck, axRange-endPadding)
 			labelRef<-NULL
 			if(!is.null(refScale))
