@@ -144,14 +144,13 @@ convertDB<-function(db=pep_hxb2,filename=NULL,refScale=NULL)
 		fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
 		lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 1)
 		#Overlay on top of the legend or not
-		if(!Gviz:::.dpOrDefault(GdObject, "legend.highlight", FALSE))
+		legend<-Gviz:::.dpOrDefault(GdObject, "legend", FALSE)
+		hLegend<-Gviz:::.dpOrDefault(GdObject, "legend.highlight", FALSE)
+		if(!hLegend && legend)
 		{
-			if(Gviz:::.dpOrDefault(GdObject, "legend", FALSE))
-			{
-				lSpace <- getPar(GdObject, ".__verticalSpace")
-				pushViewport(viewport(y=1, height=unit(1, "npc") - unit(lSpace, "inches"),
+			lSpace <- getPar(GdObject, ".__verticalSpace")
+			pushViewport(viewport(y=1, height=unit(1, "npc") - unit(lSpace, "inches"),
 								just=c(0.5, 1)))
-			}
 		}
 		else
 			pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))	
@@ -162,7 +161,6 @@ convertDB<-function(db=pep_hxb2,filename=NULL,refScale=NULL)
 					gp=gpar(col=color.highlight,fill=fill.highlight,alpha=alpha.highlight,
 							lwd=lwd.highlight,linejoin="mitre"))
 		}
-#		popViewport(1)
 		popViewport(1)
 	}
 }
