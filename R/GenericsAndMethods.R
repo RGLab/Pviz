@@ -59,16 +59,17 @@ setMethod(Gviz:::"drawGD", signature("DTrack"), function(GdObject, minBase, maxB
 		alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
 		color.highlight<- Gviz:::.dpOrDefault(GdObject, "color.highlight", "black")
 		fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
+		lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 2)
 		if(length(HRanges))
 		{
 			pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))#,clip=TRUE))
-#			browser()
-			
+#			browser()			
 			for(i in 1:length(HRanges))
 			{
-				grid.rect(x=1/(maxBase-minBase)*(start(HRanges[i])-minBase),
+				grid.rect(x=1/(maxBase-minBase)*(start(HRanges[i])-minBase-0.5),
 						width=1/(maxBase-minBase)*width(HRanges[i]), just="left",
-						gp=gpar(col=color.highlight,fill=fill.highlight,alpha=alpha.highlight))
+						gp=gpar(col=color.highlight,fill=fill.highlight,alpha=alpha.highlight,
+								lwd=lwd.highlight,linejoin="mitre"))
 			}
 			popViewport(1)
 		}
