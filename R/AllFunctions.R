@@ -130,17 +130,31 @@ convertDB<-function(db=pep_hxb2,filename=NULL,refScale=NULL)
 #####
 # drawHighlight
 #####
+##FIXME l'overlay deborde sur la gauche si < minBase
 .drawHighlight<-function(GdObject, minBase, maxBase)
 {
 	#gpar for grid.rect
 	HRanges<- getPar(GdObject, "ranges.highlight")
-	alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
-	color.highlight<- Gviz:::.dpOrDefault(GdObject, "color.highlight", "black")
-	fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
-	lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 1)
+
 	if(length(HRanges))
 	{
-		pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))		
+		#DisplayPars
+		alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
+		color.highlight<- Gviz:::.dpOrDefault(GdObject, "color.highlight", "black")
+		fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
+		lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 1)
+		#Overlay on top of the legend or not
+		if(!Gviz:::.dpOrDefault(GdObject, "legend.highlight", FALSE))
+		{
+			if(Gviz:::.dpOrDefault(GdObject, "legend", FALSE))
+			{
+				lSpace <- getPar(GdObject, ".__verticalSpace")
+				pushViewport(viewport(y=1, height=unit(1, "npc") - unit(lSpace, "inches"),
+								just=c(0.5, 1)))
+			}
+		}
+		else
+			pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))	
 		for(i in 1:length(HRanges))
 		{
 			grid.rect(x=1/(maxBase-minBase)*(start(HRanges[i])-minBase-0.5),
@@ -148,9 +162,52 @@ convertDB<-function(db=pep_hxb2,filename=NULL,refScale=NULL)
 					gp=gpar(col=color.highlight,fill=fill.highlight,alpha=alpha.highlight,
 							lwd=lwd.highlight,linejoin="mitre"))
 		}
+#		popViewport(1)
 		popViewport(1)
 	}
 }
+
+#####
+# .getGapPos
+# Returns a vector of the gaps starts and end the sequence associated with the refScale
+#####
+.getGapPos<-function(refScale, minBase, maxBase)
+{
+	gapStartList<-c()
+	gapEndList<-c()
+	i<-minBase
+	while(i<=maxBase)
+	{
+		#gap
+		if(i>1 && refScale[i]==refScale[i-1])
+		{
+			gapStartList<-c(gapStartList,i)
+			while(refScale[i]==refScale[i-1])
+			{
+				i=i+1
+			}
+			gapEndList<-c(gapEndList,i-1)
+		}
+		i=i+1
+	}
+	gapCoords<-list()
+	gapCoords<-IRanges(start=gapStartList, end=gapEndList)
+	return(gapCoords)
+}
+
+#substractRanges<-function()
+#{
+#	min<-1
+#	nSL<-c()
+#	nEL<-c()
+#	for(i in 1:length(x))
+#	{
+#		
+#	}
+#	
+#}
+
+
 
 #####
 ### Record the display parameters for each class once

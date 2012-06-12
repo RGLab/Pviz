@@ -4,7 +4,7 @@ importClassesFrom(IRanges, IRanges)
 importFrom(GenomicRanges, GRanges)
 importFrom(IRanges, IRanges)
 importFrom(HIV.db, coord2ext)
-
+importFrom(grDevices, extendrange)
 
 exportClasses("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack")
 exportMethods("start",

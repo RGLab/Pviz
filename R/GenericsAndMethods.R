@@ -379,7 +379,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 	}
 	
 	### DRAWING MODE
-	
 	#Get DisplayParameters
 	color <- Gviz:::.dpOrDefault(GdObject, "col", "darkgray")[1]
 	alpha<-getPar(GdObject,"alpha")
@@ -403,6 +402,8 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			tck<-numeric(0)
 			
 			## FIXME for faster computation make the regions (highlight/normal/gap) and then draw one segment per region
+			## locate the gaps and the highlight regions. Draw them at once.
+			
 			#Change the @range to plot the highlighted regions properly
 			HRanges<-c()
 			if(length(GdObject))
@@ -429,7 +430,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 						ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-1)
 						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
 								default.units="native",
-								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="square"))
+								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="butt"))
 					}
 					ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0.2)
 					ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-0.8)
@@ -446,7 +447,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 					{
 						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
 								default.units="native",
-								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="square"))
+								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="butt"))
 					}
 					else
 					{
