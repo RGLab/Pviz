@@ -44,37 +44,34 @@ setMethod("getNC", def=function(obj) obj@addNC)
 ##################### drawGD redefinition
 ####
 ## drawGD for DTrack
-## uses DataTrack's drawGD then adds possible highlight regions
-## highlight features?
-## 		alpha / border.color / fill.color / border.size
+## enable rectangle overlay
 ####
 setMethod(Gviz:::"drawGD", signature("DTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...)
 {
 	if(!prepare)
 	{
-		#gpar for grid.rect
-		HRanges<- getPar(GdObject, "ranges.highlight")
-		alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
-		color.highlight<- Gviz:::.dpOrDefault(GdObject, "color.highlight", "black")
-		fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
-		lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 1)
-		if(length(HRanges))
-		{
-			pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))#,clip=TRUE))		
-			for(i in 1:length(HRanges))
-			{
-				grid.rect(x=1/(maxBase-minBase)*(start(HRanges[i])-minBase-0.5),
-						width=1/(maxBase-minBase)*width(HRanges[i]), just="left",
-						gp=gpar(col=color.highlight,fill=fill.highlight,alpha=alpha.highlight,
-								lwd=lwd.highlight,linejoin="mitre"))
-			}
-			popViewport(1)
-		}
+		.drawHighlight(GdObject, minBase, maxBase)
 	}
 	GdObject <- callNextMethod(GdObject,minBase=minBase, maxBase=maxBase, prepare=prepare, subset=subset) #Call the drawGD method of Gviz::DataTrack	
 
 	return(invisible(GdObject))
 })
+
+####
+## drawGD for ATrack
+## enable rectangle overlay
+####
+setMethod(Gviz:::"drawGD", signature("ATrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...)
+{
+	if(!prepare)
+	{
+		.drawHighlight(GdObject, minBase, maxBase)
+	}
+	GdObject <- callNextMethod(GdObject,minBase=minBase, maxBase=maxBase, prepare=prepare, subset=subset) #Call the drawGD method of Gviz::AnnotationTrack	
+	
+	return(invisible(GdObject))
+})
+
 
 ####
 ## drawGD for ProbeTrack
@@ -318,7 +315,10 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 		return(invisible(GdObject))
 	}
 	
-	### DRAWING MODE	
+	### DRAWING MODE
+	## Highlighted regions
+	.drawHighlight(GdObject, minBase, maxBase)
+	
 	cex<-getPar(GdObject,"cex")
 	color<-getPar(GdObject,"fontcolor")
 	len<-nchar(seq)	

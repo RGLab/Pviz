@@ -128,6 +128,31 @@ convertDB<-function(db=pep_hxb2,filename=NULL,refScale=NULL)
 }
 
 #####
+# drawHighlight
+#####
+.drawHighlight<-function(GdObject, minBase, maxBase)
+{
+	#gpar for grid.rect
+	HRanges<- getPar(GdObject, "ranges.highlight")
+	alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
+	color.highlight<- Gviz:::.dpOrDefault(GdObject, "color.highlight", "black")
+	fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
+	lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 1)
+	if(length(HRanges))
+	{
+		pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))		
+		for(i in 1:length(HRanges))
+		{
+			grid.rect(x=1/(maxBase-minBase)*(start(HRanges[i])-minBase-0.5),
+					width=1/(maxBase-minBase)*width(HRanges[i]), just="left",
+					gp=gpar(col=color.highlight,fill=fill.highlight,alpha=alpha.highlight,
+							lwd=lwd.highlight,linejoin="mitre"))
+		}
+		popViewport(1)
+	}
+}
+
+#####
 ### Record the display parameters for each class once
 #####
 .makeParMapping <- function()
