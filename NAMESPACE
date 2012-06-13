@@ -2,7 +2,7 @@ importClassesFrom(HIV.db, HivFeature)
 importClassesFrom(GenomicRanges, GRanges)
 importClassesFrom(IRanges, IRanges)
 importFrom(GenomicRanges, GRanges)
-importFrom(IRanges, IRanges)
+importFrom(IRanges, IRanges, gaps, restrict)
 importFrom(HIV.db, coord2ext)
 importFrom(grDevices, extendrange)
 

@@ -394,72 +394,118 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			if(length(axRange)==1){axRange<-c(1, axRange)}
 			col.gap <- Gviz:::.dpOrDefault(GdObject,"col.gap","gray")
 			col.range <- Gviz:::.dpOrDefault(GdObject,"col.range","black")
-			len <- (maxBase-minBase + 1)
+			len <- (maxBase-minBase)
 
 			tckTmp<-Gviz:::.ticks(axRange)
 			tckTmp <- tckTmp[tckTmp<axRange[2]-pxOff*2 & tckTmp>axRange[1]+pxOff*2]
 			label<-as.character(tckTmp)
 			tck<-numeric(0)
 			
-			## FIXME for faster computation make the regions (highlight/normal/gap) and then draw one segment per region
-			## locate the gaps and the highlight regions. Draw them at once.
-			
-			#Change the @range to plot the highlighted regions properly
-			HRanges<-c()
-			if(length(GdObject))
-			{
-				for(r in 1:length(GdObject))
-				{
-					HRanges<-c(HRanges, seq(start(GdObject)[r],end(GdObject)[r]))
-				}
-			}
-			for(i in minBase:maxBase)
-			{
-				vpAxisPos<-viewport(x=(1/(len-1))*(i-minBase),
-						width=1/(len-1))
-				pushViewport(vpAxisPos)
+#			## FIXME for faster computation make the regions (highlight/normal/gap) and then draw one segment per region
+#			## locate the gaps and the highlight regions. Draw them at once.
+#			
+#			HRanges<-c()
+#			if(length(GdObject))
+#			{
+#				for(r in 1:length(GdObject))
+#				{
+#					HRanges<-c(HRanges, seq(start(GdObject)[r],end(GdObject)[r]))
+#				}
+#			}
+#			for(i in minBase:maxBase)
+#			{
+#				vpAxisPos<-viewport(x=(1/(len-1))*(i-minBase),
+#						width=1/(len-1))
+#				pushViewport(vpAxisPos)
+#
+#				if(i>length(refScale))
+#				{}
+#				#Determine if highlighted region
+#				else if(i>1 && refScale[i]==refScale[i-1]) #gap
+#				{
+#					if(i %in% HRanges)
+#					{
+#						ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0)
+#						ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-1)
+#						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
+#								default.units="native",
+#								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="butt"))
+#					}
+#					ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0.2)
+#					ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-0.8)
+#					grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
+#							default.units="native",
+#							gp=gpar(col=col.gap, alpha=alpha, lwd=lwd*1))
+#					
+#				}
+#				else #no gap
+#				{
+#					ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0)
+#					ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-1)
+#					if(i %in% HRanges)
+#					{
+#						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
+#								default.units="native",
+#								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="butt"))
+#					}
+#					else
+#					{
+#						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
+#								default.units="native",
+#								gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="butt"))
+#				
+#					}
+#				}
+#				popViewport(1)
+#			 }
+		maxIR<-min(maxBase, length(refScale))
+		gapCoords<-.getGapPos(refScale, minBase, maxIR)
+		newIRanges<-gaps(gapCoords, minBase, maxIR)
+		HR<-range(GdObject)
+		for(i in 1:length(newIRanges))
+		{
+			ifelse(start(newIRanges[i])<=minBase,extS<-0.5,extS<-0)
+			ifelse(end(newIRanges[i])>=maxBase,extE<-0.5,extE<-0)
+			vpAxisPos<-viewport(x=(1/(len))*(start(newIRanges[i])-minBase-0.5+extS),width=(width(newIRanges[i])-extS-extE)/(len),just=c("left"))
+			pushViewport(vpAxisPos)
+			grid.segments(x0=0, y0=0.5, x1=1,  y1=0.5,
+						default.units="native",
+						gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="butt"))
+			popViewport(1)
 
-				if(i>length(refScale))
-				{}
-				#Determine if highlighted region
-				else if(i>1 && refScale[i]==refScale[i-1]) #gap
-				{
-					if(i %in% HRanges)
-					{
-						ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0)
-						ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-1)
-						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
-								default.units="native",
-								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="butt"))
-					}
-					ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0.2)
-					ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-0.8)
-					grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
-							default.units="native",
-							gp=gpar(col=col.gap, alpha=alpha, lwd=lwd*1))
-					
-				}
-				else #no gap
-				{
-					ifelse(i==minBase,x0Pos<-0.5,x0Pos<-0)
-					ifelse(i==maxBase,x1Pos<-0.5,x1Pos<-1)
-					if(i %in% HRanges)
-					{
-						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
-								default.units="native",
-								gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="butt"))
-					}
-					else
-					{
-						grid.segments(x0=x0Pos, y0=0.5, x1=x1Pos,  y1=0.5,
-								default.units="native",
-								gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="butt"))
-				
-					}
-				}
+		}
+		if(length(HR))
+		{
+		for(i in 1:length(HR))
+		{
+			ifelse(start(HR[i])<=minBase,extS<-minBase-start(HR[i])+0.5,extS<-0)
+			ifelse(end(HR[i])>=maxBase,extE<-end(HR[i])-maxBase+0.5,extE<-0)
+			vpAxisPos<-viewport(x=(1/(len))*(start(HR[i])-minBase-0.5+extS),width=(width(HR[i])-extS-extE)/(len),just=c("left"))
+			pushViewport(vpAxisPos)
+			grid.segments(x0=0, y0=0.5, x1=1,  y1=0.5,
+					default.units="native",
+					gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="butt"))
+			popViewport(1)
+		}
+		}#if(len(HR))
+		if(length((gapCoords)))
+		{
+		for(i in 1:length(gapCoords))
+		{
+
+			for(gPos in 1:width(gapCoords[i]))
+			{
+				ifelse(start(gapCoords[i])<=minBase && gPos==1,x0pos<-0.5,x0pos<-0.2)
+				ifelse(end(gapCoords[i])>=maxBase && gPos==width(gapCoords[i]),x1pos<-0.5,x1pos<-0.8)
+				vpAxisPos<-viewport(x=(1/(len))*(start(gapCoords[i])-minBase+gPos-1-0.5),width=1/(len),just=c("left"))
+				pushViewport(vpAxisPos)
+				grid.segments(x0=x0pos, y0=0.5, x1=x1pos,  y1=0.5,
+						default.units="native",
+						gp=gpar(col=col.gap, alpha=alpha, lwd=lwd))
 				popViewport(1)
-				
 			}
+		}
+		}
 			tck<-coord2ext(tckTmp,refScale)
 		}
 		
@@ -472,7 +518,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			#draw the axis
 			grid.segments(x0=minBase, y0=0.5, x1=maxBase,  y1=0.5,
 			default.units="native",
-			gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="square"))
+			gp=gpar(col=color, alpha=alpha, lwd=lwd*2, lineend="butt"))
 
 			#vertical ticks
 

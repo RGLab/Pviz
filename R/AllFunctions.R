@@ -130,14 +130,14 @@ convertDB<-function(db=pep_hxb2,filename=NULL,refScale=NULL)
 #####
 # drawHighlight
 #####
-##FIXME l'overlay deborde sur la gauche si < minBase
 .drawHighlight<-function(GdObject, minBase, maxBase)
 {
 	#gpar for grid.rect
 	HRanges<- getPar(GdObject, "ranges.highlight")
-
+	
 	if(length(HRanges))
 	{
+		HRanges<-restrict(HRanges, start=minBase, end=maxBase)
 		#DisplayPars
 		alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
 		color.highlight<- Gviz:::.dpOrDefault(GdObject, "color.highlight", "black")
@@ -192,19 +192,6 @@ convertDB<-function(db=pep_hxb2,filename=NULL,refScale=NULL)
 	gapCoords<-IRanges(start=gapStartList, end=gapEndList)
 	return(gapCoords)
 }
-
-#substractRanges<-function()
-#{
-#	min<-1
-#	nSL<-c()
-#	nEL<-c()
-#	for(i in 1:length(x))
-#	{
-#		
-#	}
-#	
-#}
-
 
 
 #####
