@@ -7,13 +7,17 @@
 \SweaveOpts{keep.source=FALSE,pdf=TRUE,eps=FALSE}
 
 \usepackage{Sweave}
+\usepackage{underscore}
 
 \newcommand{\mgg}[0]{\Rpackage{Pviz} }
 
 \author{Renan Sauteraud\footnote{rsautera@fhcrc.org}}
 \begin{document}
 \title{The \mgg User Guide}
+\maketitle
 
+
+\section{Example of plot}
 <<init>>=
 library(HIV.db)
 library(Pviz)
@@ -69,5 +73,58 @@ d6Track<-DTrack(range=IRanges(start=pepExprEx$dPos,width=1),groups=rownames(pepE
 <<Plotting>>=
 plotTracks(trackList=c(rpext,rpref,sTrack,a2Track,a3Track,a6Track,p1Track,d6Track), from=1, to=150, type=c("p","smooth"), stacking="dense",legend=TRUE, showFeatureId=TRUE)
 @
+
+\section{Use extended coordinates system}
+The extended coordinate system is based on a multiple alignment. It is a scale from 0 to the length of the alignmenat (i.e: reference sequence + gaps).
+
+The refScale is a scale used to translate coordinates between the extended system and the normal system (which is based uniquely on the reference sequence length).
+
+\subsection{Data formating}
+In the following examples, hxb2 is the reference sequence and is aligned with different subtypes.
+
+First, get the refScale:
+<<refScale>>=
+alignObj<-readAlign(filename=system.file("extdata/alignment.fasta", package="Pviz"))
+refScale<-alignObj[[1]]
+refSeq<-alignObj[[2]]
+@
+
+Now, the refScale can be used to translate coordiantes into the extended system.
+
+Example of loading HIV_db using extended coordinates. 
+<<coord2ext>>=
+library(HIV.db)
+HIV_db<-loadFeatures(ref="env", refScale=refScale)
+envBase<-getFeature(HIV_db)
+@
+
+The positions in envBase are the ones observed in the alignment.
+
+To translate all the positions in pep_hxb2, use convertDB().
+<<convertDB>>=
+data(pep_hxb2)
+ndb<-convertDB(db=pep_hxb2)
+@
+
+ndb is pep_hxb2 with updated ranges, aligned and trimmed columns.
+
+To convert coordinates into the extended system, use coord2ext() with the refScale defined earlier:
+<<coord2ext>>=
+start<-coord2ext(c(200,450), ref=refScale)
+start
+@
+
+\subsection{Plotting with both coordinates system}
+All objects used to create tracks should be in extended coordinate system.
+<<plotting>>=
+sTrack<-SequenceTrack(refSeq)
+pax1<-ProteinAxisTrack()
+pax2<-ProteinAxisTrack(refScale=refScale, col.gap="blue")
+proteins<-getFeature(HIV_db,category="protein",start=envStart,end=envEnd,frame=getFrame(envBase))
+aTrack<-ATrack(id=proteins@values@unlistData@listData$name,start=start(proteins),end=end(proteins))
+aTrack<-ATrack(id=helix@values@unlistData@listData$name,start=start(helix),end=end(helix),fill="red")
+plotTracks(c(pax1,pax2,sTrack,aTrack), from=1, to=160)
+@
+The first axis track displays the extended scale, while the second displays the reference coordinates, it also shows the gaps in the reference sequence with respect of the alignment.
 
 \end{document}
