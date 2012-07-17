@@ -9,11 +9,10 @@
 \usepackage{Sweave}
 \usepackage{underscore}
 
-\newcommand{\mgg}[0]{\Rpackage{Pviz} }
 
 \author{Renan Sauteraud\footnote{rsautera@fhcrc.org}}
 \begin{document}
-\title{The \mgg User Guide}
+\title{The Pviz User Guide}
 \maketitle
 
 
