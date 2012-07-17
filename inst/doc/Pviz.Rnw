@@ -1,0 +1,73 @@
+%\VignetteIndexEntry{The Pviz users guide}
+%\VignetteDepends{Pviz}
+%\VignetteKeywords{Visualization}
+%\VignettePackage{Pviz}
+\documentclass[11pt]{article}
+
+\SweaveOpts{keep.source=FALSE,pdf=TRUE,eps=FALSE}
+
+\usepackage{Sweave}
+
+\newcommand{\mgg}[0]{\Rpackage{Pviz} }
+
+\author{Renan Sauteraud\footnote{rsautera@fhcrc.org}}
+\begin{document}
+\title{The \mgg User Guide}
+
+<<init>>=
+library(HIV.db)
+library(Pviz)
+
+################## Get reference scale from alignment
+alignObj<-readAlign()
+refScale<-alignObj[[1]]
+refSeq<-alignObj[[2]]
+
+################## Load database
+HIV_db<-loadFeatures(ref="env")
+envBase<-getFeature(HIV_db)
+envStart=getHXB2Coordinates(envBase)[1,][1] 
+envEnd=getHXB2Coordinates(envBase)[1,][2] 
+
+################## Getting Features from database for annotation
+proteins<-getFeature(HIV_db,category="protein",start=envStart,end=envEnd,frame=getFrame(envBase))
+antis<-getEpitope(envBase,name=c("VRC01"))
+helix<-getChildren(envBase,category=c("helix"))
+@
+
+<<ProteinAxisTrack>>=
+## ProteinAxisTrack using the extended coordinates system
+rpext<-ProteinAxisTrack(littleTicks=TRUE)
+## ProteinAxisTrack with coordinates relative to the reference
+rpref<-ProteinAxisTrack(refScale=refScale, adNC=TRUE)
+@
+
+<<SequenceTrack>>=
+sTrack<-SequenceTrack(refSeq)
+@
+
+<<ProbeTrack>>=
+## Loading data
+data(pepMicroarrayEx)
+
+p1Track<-ProbeTrack(pepMicroarrayEx$probeSeq, pepMicroarrayEx$probeFreq, pepMicroarrayEx$probePos
+		, protein="gp120", name="sequence(B)")
+@
+
+<<ATrack>>=
+a2Track<-ATrack(id=proteins@values@unlistData@listData[["name"]],start=start(proteins),end=end(proteins),genome='hxb2',name="Protein",protein="gp120",fill="navyblue",size=1)
+a3Track<-ATrack(id=helix@values@unlistData@listData[["name"]],start=start(helix),end=end(helix),genome='hxb2',name="Helix",fill="orange",protein="gp120")
+a6Track<-ATrack(id=antis@values@unlistData@listData[["name"]],start=start(antis),end=end(antis),genome='hxb2',name="Epitopes",fill="gray",protein="gp120")
+@
+
+<<DTrack>>=
+data(pepExprEx)
+library(IRanges)
+d6Track<-DTrack(range=IRanges(start=pepExprEx$dPos,width=1),groups=rownames(pepExprEx$dExpr),data=pepExprEx$dExpr,genome='hxb2',protein="gp120",col=c("orange","gray"),cex=1)
+@
+
+<<Plotting>>=
+plotTracks(trackList=c(rpext,rpref,sTrack,a2Track,a3Track,a6Track,p1Track,d6Track), from=1, to=150, type=c("p","smooth"), stacking="dense",legend=TRUE, showFeatureId=TRUE)
+@
+
+\end{document}

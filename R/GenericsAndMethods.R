@@ -401,9 +401,6 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			label<-as.character(tckTmp)
 			tck<-numeric(0)
 			
-#			## FIXME for faster computation make the regions (highlight/normal/gap) and then draw one segment per region
-#			## locate the gaps and the highlight regions. Draw them at once.
-#			
 #			HRanges<-c()
 #			if(length(GdObject))
 #			{
@@ -462,6 +459,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		gapCoords<-.getGapPos(refScale, minBase, maxIR)
 		newIRanges<-gaps(gapCoords, minBase, maxIR)
 		HR<-range(GdObject)
+		#Draw axis without gaps
 		for(i in 1:length(newIRanges))
 		{
 			ifelse(start(newIRanges[i])<=minBase,extS<-0.5,extS<-0)
@@ -474,6 +472,7 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 			popViewport(1)
 
 		}
+		#Draw highlighted ranges
 		if(length(HR))
 		{
 		for(i in 1:length(HR))
@@ -487,7 +486,8 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 					gp=gpar(col=col.range, alpha=alpha, lwd=lwd*2, lineend="butt"))
 			popViewport(1)
 		}
-		}#if(len(HR))
+		}
+		#Draw gaps
 		if(length((gapCoords)))
 		{
 		for(i in 1:length(gapCoords))

@@ -10,7 +10,7 @@
 }
 
 \usage{
-	convertDB(db=pep_hxb2,filename=NULL,refScale=NULL)
+	convertDB(db=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 }
 
 \arguments{
