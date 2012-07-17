@@ -18,7 +18,7 @@ pSet1<-makePeptideSet(files=NULL,path="/home/rsautera/workspace/ex_files/RV2/",m
 #data(pSet1.rda)
 #
 data(pep_hxb2)
-ndb<-convertDB(db=pep_hxb2)
+ndb<-convertDB(db=pep_hxb2) #Any object created using ndb will be in extended coordinates.
 psSet1<-summarizePeptides(pSet1,summary="median",position=ndb)
 Zpep = read.csv("Programs/git/pepStat/misc/peptides_zpep.csv") 
 feat = peptide(psSet1)
