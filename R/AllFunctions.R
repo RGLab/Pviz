@@ -9,13 +9,12 @@ readAlign<-function(filename=NULL)
     alFile<-file(filename,open="r")
 	lineList<-list()
 	lineCnt<-1
-	while(length(oneLine <- readLines(alFile, n = 4, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
+	while(length(oneLine <- readLines(alFile, n = 2, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
 	{
 		lineList<-c(lineList,oneLine)
 	}
 	close(alFile) #
 	refSeq<-lineList[[2]]
-	newSeq<-lineList[[4]]
 	
 	len<-nchar(refSeq)
 	gapCnt<-0
@@ -31,7 +30,6 @@ readAlign<-function(filename=NULL)
 	refObj<-list()
 	refObj[[1]]<-refScale #the scale
 	refObj[[2]]<-refSeq   #the sequence with gaps
-	refObj[[3]]<-newSeq
 	return(refObj)
 }
 
@@ -45,7 +43,7 @@ convertDB<-function(db=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 	## Read the file
 	if(is.null(filename)){filename<-system.file("extdata/newMuscleMultipleAlignment.fasta", package="Pviz")}
 	alFile<-file(filename,open="r")
-	lineList<-readLines(alFile, n=16) #16 lines, i.e ref+7 subtypes
+	lineList<-readLines(alFile, n=-1L) #16 lines, i.e ref+7 subtypes
 	close(alFile) #
 	
 	refSeq<-lineList[2]
