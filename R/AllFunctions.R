@@ -35,10 +35,10 @@ readAlign<-function(filename=NULL)
 
 
 ###
-# convertDB
+# convertPep
 #  Changes the position, aligned,, trimmed and peptide columns
 ###
-convertDB<-function(db=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
+convertPep<-function(rd=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 {
 	## Read the file
 	if(is.null(filename)){filename<-system.file("extdata/newMuscleMultipleAlignment.fasta", package="Pviz")}
@@ -75,27 +75,25 @@ convertDB<-function(db=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 		sTypeSeq<-c(sTypeSeq,lineList[lCnt+1])
 		lCnt<-lCnt+2
 	}
-	sTypeList<-list(sTypeIDList,sTypeSeq)
-	print(sTypeList)
 
-	##Convert the positions of the db
-	ndb<-coord2ext(db,refScale)
+	##Convert the positions of the rd
+	nrd<-coord2ext(rd,refScale)
 
-	t1<-system.time({
+	#t1<-system.time({
 
 	##Get the aligned sequence
-	aligned<-reference<-character(length(rownames(ndb)))
+	aligned<-reference<-character(length(rownames(nrd)))
 	for(ID in sTypeIDList)
 	{
-		TFvec<-ndb[[ID]]
+		TFvec<-nrd[[ID]]
 		idx<-which(TFvec==TRUE)
 		newAligns<-sapply(idx, function(x){
-					substr(sTypeSeq[which(sTypeIDList==ID)],start(ndb)[x],end(ndb)[x])
+					substr(sTypeSeq[which(sTypeIDList==ID)],start(nrd)[x],end(nrd)[x])
 				})
 		aligned[idx]<-newAligns
 		
 		newRef<-sapply(idx, function(x){
-					substr(refSeq,start(ndb)[x],end(ndb)[x])
+					substr(refSeq,start(nrd)[x],end(nrd)[x])
 				})
 		reference[idx]<-newRef
 	}
@@ -115,13 +113,13 @@ convertDB<-function(db=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 		trimmed<-c(trimmed,paste(trimmedS,collapse=""))
 	}
 						
-	})#end t1
+	#})#end t1
 
-	##Set the values for the new db
-	ndb$aligned<-aligned
-	ndb$trimmed<-trimmed
-	print(t1)
-	return(ndb)
+	##Set the values for the new rd
+	nrd$aligned<-aligned
+	nrd$trimmed<-trimmed
+	#print(t1)
+	return(nrd)
 }
 
 #####

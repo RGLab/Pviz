@@ -12,4 +12,4 @@ exportMethods("start",
 export("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack",
 		"coord2ext",
 		"readAlign",
-		"convertDB")
+		"convertPep")

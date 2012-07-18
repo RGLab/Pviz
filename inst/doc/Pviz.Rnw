@@ -2,19 +2,20 @@
 %\VignetteDepends{Pviz}
 %\VignetteKeywords{Visualization}
 %\VignettePackage{Pviz}
-\documentclass[11pt]{article}
-
-\SweaveOpts{keep.source=FALSE,pdf=TRUE,eps=FALSE}
-
+\documentclass[a4paper]{article}
 \usepackage{Sweave}
 \usepackage{underscore}
 
 
 \author{Renan Sauteraud\footnote{rsautera@fhcrc.org}}
+
 \begin{document}
 \title{The Pviz User Guide}
 \maketitle
 
+\tableofcontents
+
+\newpage
 
 \section{Example of plot}
 <<init>>=
@@ -50,7 +51,6 @@ sTrack<-SequenceTrack(refSeq)
 @
 
 <<ProbeTrack>>=
-## Loading data
 data(pepMicroarrayEx)
 
 p1Track<-ProbeTrack(pepMicroarrayEx$probeSeq, pepMicroarrayEx$probeFreq, pepMicroarrayEx$probePos
@@ -73,7 +73,8 @@ d6Track<-DTrack(range=IRanges(start=pepExprEx$dPos,width=1),groups=rownames(pepE
 plotTracks(trackList=c(rpext,rpref,sTrack,a2Track,a3Track,a6Track,p1Track,d6Track), from=1, to=150, type=c("p","smooth"), stacking="dense",legend=TRUE, showFeatureId=TRUE)
 @
 
-\section{Use extended coordinates system}
+\section{Using the extended coordinates system}
+
 The extended coordinate system is based on a multiple alignment. It is a scale from 0 to the length of the alignmenat (i.e: reference sequence + gaps).
 
 The refScale is a scale used to translate coordinates between the extended system and the normal system (which is based uniquely on the reference sequence length).
@@ -99,13 +100,13 @@ envBase<-getFeature(HIV_db)
 
 The positions in envBase are the ones observed in the alignment.
 
-To translate all the positions in pep_hxb2, use convertDB().
-<<convertDB>>=
+To translate all the positions in pep_hxb2, use convertPep().
+<<convertPep>>=
 data(pep_hxb2)
-ndb<-convertDB(db=pep_hxb2)
+nrd<-convertPep(rd=pep_hxb2)
 @
 
-ndb is pep_hxb2 with updated ranges, aligned and trimmed columns.
+nrd is pep_hxb2 with updated ranges, aligned and trimmed columns.
 
 To convert coordinates into the extended system, use coord2ext() with the refScale defined earlier:
 <<coord2ext>>=

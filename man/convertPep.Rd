@@ -1,16 +1,16 @@
-\name{convertDB}
-\alias{convertDB}
+\name{convertPep}
+\alias{convertPep}
 
 \title{
-	Function to convert a database based on an alignment file.
+	Function to convert a RangedData object based on an alignment file.
 }
 
 \description{
-	\code{convertDB} modify the position, aligned and trimmed column of a database, based on an alignment file.
+	\code{convertPep} modify the position, aligned and trimmed column of the RangedData, based on an alignment file.
 }
 
 \usage{
-	convertDB(db=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
+	convertPep(db=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 }
 
 \arguments{
@@ -23,7 +23,7 @@
 }
 
 \value{
-	A new database of class \code{\linkS4class{RangedData}} with updated positions, aligned and trimmed columns with respect of the alignment.
+	A new object of class \code{\linkS4class{RangedData}} with updated positions, aligned and trimmed columns with respect of the alignment.
 }
 
 \author{
