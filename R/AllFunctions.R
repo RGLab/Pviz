@@ -42,7 +42,7 @@ convertPep<-function(rd=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 	## Read the file
 	if(is.null(filename)){filename<-system.file("extdata/newMuscleMultipleAlignment.fasta", package="Pviz")}
 	alFile<-file(filename,open="r")
-	lineList<-readLines(alFile, n=16) #16 lines, i.e ref+7 subtypes
+	lineList<-readLines(alFile, n=-1L)#16) #16 lines, i.e ref+7 subtypes
 	close(alFile) #
 	
 	refSeq<-lineList[2]
@@ -67,7 +67,7 @@ convertPep<-function(rd=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 	lCnt<-3 #no need to loop on the reference
 	sTypeIDList<-character()
 	sTypeSeq<-numeric()
-	while(lCnt < length(lineList))
+	while(lCnt < 16) #length(lineList))
 	{
 		sType<-gsub("> ","",lineList[lCnt])
 		sType<-gsub(">","",sType)
