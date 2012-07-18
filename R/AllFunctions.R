@@ -6,9 +6,8 @@ readAlign<-function(filename=NULL)
 	## EASY MODE:
 	## Assume first line is >HXB2, second is hxb2 seq, third is >newSeqID,  fourth is newSeq seq
 	if(is.null(filename)){filename<-system.file("extdata/alignment.fasta", package="Pviz")}
-    alFile<-file(filename,open="r")
+        alFile<-file(filename,open="r")
 	lineList<-list()
-	lineCnt<-1
 	while(length(oneLine <- readLines(alFile, n = 2, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
 	{
 		lineList<-c(lineList,oneLine)
@@ -43,7 +42,7 @@ convertPep<-function(rd=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 	## Read the file
 	if(is.null(filename)){filename<-system.file("extdata/newMuscleMultipleAlignment.fasta", package="Pviz")}
 	alFile<-file(filename,open="r")
-	lineList<-readLines(alFile, n=-1L) #16 lines, i.e ref+7 subtypes
+	lineList<-readLines(alFile, n=16) #16 lines, i.e ref+7 subtypes
 	close(alFile) #
 	
 	refSeq<-lineList[2]
@@ -71,6 +70,7 @@ convertPep<-function(rd=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 	while(lCnt < length(lineList))
 	{
 		sType<-gsub("> ","",lineList[lCnt])
+		sType<-gsub(">","",sType)
 		sTypeIDList<-c(sTypeIDList,sType)
 		sTypeSeq<-c(sTypeSeq,lineList[lCnt+1])
 		lCnt<-lCnt+2
@@ -201,3 +201,113 @@ convertPep<-function(rd=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 		assignInNamespace(x=".parMappings", value=defs, ns="Pviz")
 }
 .parMappings <- NULL
+
+#####
+### SIVrd
+###   return a RangedData like pep_hxb2
+#####
+.SIVrd<-function(fastaFile)
+{
+  zTable<-.zTable()
+  
+  #Parse fasta file
+  IN<-file(fastaFile,open="r")
+  lineList<-list()
+  while(length(oneLine <- readLines(IN, n = 4, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
+  {
+    lineList<-c(lineList,oneLine)
+  }
+  close(IN)
+
+  #Lists to create RangedData
+  peptideList<-c()
+  startList<-c()
+  alignedList<-c()
+  mac239List<-E660List<-c()
+  z1sumList<-z2sumList<-z3sumList<-z4sumList<-z5sumList<-c()
+  
+  for(seqCnt in c(2,4)) #mac239 E660
+  {
+    for(pepCnt in seq(1,nchar(lineList[seqCnt])-12,3))
+    {
+      peptide<-substr(lineList[seqCnt],pepCnt,pepCnt+14) #peptides of 15 AA
+      aligned<-substr(lineList[2],pepCnt,pepCnt+14) #aligned on mac239
+
+	  if(seqCnt!=2 & peptide==aligned) #if the peptide is the same in E660 & mac239 do not duplicate the peptide
+	  {
+          E660List[which(peptideList==peptide)]<-TRUE
+		  break
+	  }
+	  z1sum<-z2sum<-z3sum<-z4sum<-z5sum<-0
+	  for(AACnt in 1:15)
+	  {
+		  AA<-substr(peptide,AACnt,AACnt)
+		  if(AA=="")
+			  break
+		  z1sum<-z1sum+zTable[AA,1]
+		  z2sum<-z2sum+zTable[AA,2]
+		  z3sum<-z3sum+zTable[AA,3]
+		  z4sum<-z4sum+zTable[AA,4]
+		  z5sum<-z5sum+zTable[AA,5]
+	  }
+	  if(seqCnt==2)
+	  {
+	    mac239List<-c(mac239List,TRUE)
+	    E660List<-c(E660List,FALSE)
+	  }
+	  else if(seqCnt==4)
+	  {
+		E660List<-c(E660List,TRUE)
+	    mac239List<-c(mac239List,FALSE)
+	  }
+	  peptideList<-c(peptideList,peptide)
+	  startList<-c(startList,pepCnt)
+      alignedList<-c(alignedList,aligned)
+	  z1sumList<-c(z1sumList,z1sum)
+	  z2sumList<-c(z2sumList,z2sum)
+	  z3sumList<-c(z3sumList,z3sum)
+	  z4sumList<-c(z4sumList,z4sum)
+	  z5sumList<-c(z5sumList,z5sum)
+    }
+  }
+#  browser()
+  nrd<-RangedData(ranges=IRanges(start=startList,width=15), aligned=alignedList,
+		  mac239=mac239List, E660=E660List,
+		  z1sum=z1sumList,z2sum=z2sumList,z3sum=z3sumList,z4sum=z4sumList,z5sum=z5sumList)
+  rownames(nrd)<-peptideList
+  nrd<-nrd[order(start(nrd)),]
+  return(nrd)
+
+}
+
+.zTable<-function()
+{
+  rownames<-c("A","R","N","D","C","Q","E","G","H","I","L","K","M","F","P","S","T","W","Y","V")
+  colnames<-c("z1","z2","z3","z4","z5")
+  zTable<-c(
+0.24,	-2.32,	0.6,	-0.14,	1.3,
+3.52,	2.5,	-3.5,	1.99,	-1.7,
+3.05,	1.62,	1.04,	-1.15,	1.61,
+3.98,	0.93,	1.93,	-2.46,	0.75,
+0.84,	-1.67,	3.71,	0.18,	-2.65,
+1.75,	0.5,	-1.44,	-1.34,	0.66,
+3.11,	0.26,	-0.11,	-3.04,	-0.25,
+2.05,	-4.06,	0.36,	-0.82,	-0.38,
+2.47,	1.95,	0.26,	3.9,	0.09,
+-3.89,	-1.73,	-1.71,	-0.84,	0.26,
+-4.28,	-1.3,	-1.49,	-0.72,	0.84,
+2.29,	0.89,	-2.49,	1.49,	0.31,
+-2.85,	-0.22,	0.47,	1.94,	-0.98,
+-4.22,	1.94,	1.06,	0.54,	-0.62,
+-1.66,	0.27,	1.84,	0.7,	2,
+2.39,	-1.07,	1.15,	-1.39,	0.67,
+0.75,	-2.18,	-1.12,	-1.46,	-0.4,
+-4.36,	3.94,	0.59,	3.44,	-1.59,
+-2.54,	2.44,	0.43,	0.04,	-1.47,
+-2.59,	-2.64,	-1.54,	-0.85,	-0.02)
+  dim(zTable)<-c(20,5)
+  dimnames(zTable)<-list(rownames,colnames)
+
+  return(zTable)
+
+}
