@@ -88,7 +88,7 @@ setClass("ProbeTrack", contains = "GdObject",
 				probeStart = list(),
 				dp = DisplayPars(
 						color = "black",
-						color.probe=heat.colors(8, alpha = 1),
+						color=heat.colors(8, alpha = 1),
 						size = 2, #it displays better when slightly bigger than annotation tracks
 						cex=5
 				)
@@ -154,6 +154,7 @@ setMethod("initialize", "SequenceTrack", function(.Object, sequence, ...)
 ## SequenceTrack constructor
 SequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, name="Sequence", chromosome="chrR", genome="all", ...)
 {
+	sequence<-as.character(sequence) #In case the user provide AA/DNAstring
 	#chr and genome are needded to use methods inherited from RangeTrack
 	if(!is.null(anno))
 	{	

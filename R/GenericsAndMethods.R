@@ -111,7 +111,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 				###LEGEND
 				if(Gviz:::.dpOrDefault(GdObject, "legend", FALSE)){	
 					
-					color.probe<-getPar(GdObject,"color.probe")
+					color<-getPar(GdObject,"color")
 					cex <- Gviz:::.dpOrDefault(GdObject, "cex.legend", 1)					
 					fontsize <- Gviz:::.dpOrDefault(GdObject, "fontsize.legend", 12)
 					fontface <- Gviz:::.dpOrDefault(GdObject, "fontface.legend", 1)
@@ -128,15 +128,15 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 
 					colWidth <- max(lengths + boxSize + spacing*2)
 					availSpace <- Gviz:::vpLocation()$isize
-					colNum=length(color.probe)+3
-					rowNum <- ceiling(length(color.probe)/colNum)
+					colNum=length(color)+3
+					rowNum <- ceiling(length(color)/colNum)
 					rowHeight <- max(c(heights, 0.1))			
 										
 					vertSpace <- ((rowHeight * rowNum) + (hspacing * (rowNum-1)) + 0.2)#*1.5
 							
 					#Add the legend to the list of display parameters
 					displayPars(GdObject) <- list(".__verticalSpace"=vertSpace, ".__layoutDims"=c(rowNum, colNum),
-							".__boxSize"=boxSize, ".__spacing"=spacing, ".__groupLevels"=color.probe)
+							".__boxSize"=boxSize, ".__spacing"=spacing, ".__groupLevels"=color)
 					popViewport(1)
 				}
 				
@@ -224,8 +224,8 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 			probeArray<-subset(probeArray,probeStart>=minBase&probeStart<=maxBase)
 			
 			
-			color<-getPar(GdObject,"fontcolor")
-			color.probe<-getPar(GdObject,"color.probe")
+			fontcolor<-getPar(GdObject,"fontcolor")
+			color<-getPar(GdObject,"color")
 			alpha<-getPar(GdObject,"alpha")
 			width<-maxBase-minBase
 			nSeq<-width/15
@@ -244,11 +244,11 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 			##include the range value for cutting function
 			intVec<-c(probeArray$intensity,range.legend)
 			#get color by intensity
-			probeArray$intensityInterval <- cut(intVec,breaks=length(color.probe),right=F,include.lowest=T)[1:nrow(probeArray)]
+			probeArray$intensityInterval <- cut(intVec,breaks=length(color),right=F,include.lowest=T)[1:nrow(probeArray)]
 			
 			idCex<-getPar(GdObject,"cex")
 			seqCex<-idCex/nSeq
-			setPar(GdObject,"seqCex",seqCex)
+
 			#calculate x,y coordinates of each character
 			by(probeArray,probeArray$posInterval,function(curData){
 						for(i in 1:nrow(curData))
@@ -259,7 +259,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 							grid.rect(x=xstart,y=i
 									,width = xright-xstart,
 									,height = 0.9#idCex/nSeq
-									,gp =gpar(fill=color.probe[curData$intensityInterval[i]]
+									,gp =gpar(fill=color[curData$intensityInterval[i]]
 											,col="transparent"
 											,alpha=alpha
 									)
@@ -274,7 +274,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 										grid.text(label=substr(AAsequence,j,j)
 												,x=xPos
 												,y=i,
-												,gp = gpar(col=color
+												,gp = gpar(col=fontcolor
 														,cex =seqCex
 												)
 												,default.units = "native")	 
@@ -320,7 +320,7 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 	.drawHighlight(GdObject, minBase, maxBase)
 	
 	cex<-getPar(GdObject,"cex")
-	color<-getPar(GdObject,"fontcolor")
+	fontcolor<-getPar(GdObject,"fontcolor")
 	len<-nchar(seq)	
 	#print each char of the sequence
 	for(cnt in 1:len)
@@ -329,7 +329,7 @@ setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBas
 		vpLetter<-viewport(x=(1/(len-1))*(cnt-1),
 				width=1/(len-1))
 		pushViewport(vpLetter)
-		grid.text(label=char,gp=gpar(cex=cex,col=color))
+		grid.text(label=char,gp=gpar(cex=cex,col=fontcolor))
 		popViewport(1)
 	}
 	popViewport(1)

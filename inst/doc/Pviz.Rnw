@@ -2,7 +2,7 @@
 %\VignetteDepends{Pviz}
 %\VignetteKeywords{Visualization}
 %\VignettePackage{Pviz}
-\documentclass[a4paper]{article}
+\documentclass[11pt]{article}
 \usepackage{Sweave}
 \usepackage{underscore}
 
@@ -57,13 +57,13 @@ p1Track<-ProbeTrack(pepMicroarrayEx$probeSeq, pepMicroarrayEx$probeFreq, pepMicr
 		, protein="gp120", name="sequence(B)")
 @
 
-<<ATrack>>=
+<<ATrack, echo=TRUE>>=
 a2Track<-ATrack(id=proteins@values@unlistData@listData[["name"]],start=start(proteins),end=end(proteins),genome='hxb2',name="Protein",protein="gp120",fill="navyblue",size=1)
 a3Track<-ATrack(id=helix@values@unlistData@listData[["name"]],start=start(helix),end=end(helix),genome='hxb2',name="Helix",fill="orange",protein="gp120")
 a6Track<-ATrack(id=antis@values@unlistData@listData[["name"]],start=start(antis),end=end(antis),genome='hxb2',name="Epitopes",fill="gray",protein="gp120")
 @
 
-<<DTrack>>=
+<<DTrack, echo=TRUE>>=
 data(pepExprEx)
 library(IRanges)
 d6Track<-DTrack(range=IRanges(start=pepExprEx$dPos,width=1),groups=rownames(pepExprEx$dExpr),data=pepExprEx$dExpr,genome='hxb2',protein="gp120",col=c("orange","gray"),cex=1)
@@ -116,7 +116,7 @@ start
 
 \subsection{Plotting with both coordinates system}
 All objects used to create tracks should be in extended coordinate system.
-<<plotting>>=
+<<plotting, echo=TRUE, results=verbatim>>=
 sTrack<-SequenceTrack(refSeq)
 pax1<-ProteinAxisTrack()
 pax2<-ProteinAxisTrack(refScale=refScale, col.gap="blue")

@@ -18,7 +18,7 @@ pSet1<-makePeptideSet(files=NULL,path="/home/rsautera/workspace/ex_files/RV2/",m
 #data(pSet1.rda)
 #
 data(pep_hxb2)
-ndb<-convertPep(db=pep_hxb2) #Any object created using ndb will be in extended coordinates.
+ndb<-convertPep(rd=pep_hxb2) #Any object created using ndb will be in extended coordinates.
 psSet1<-summarizePeptides(pSet1,summary="median",position=ndb)
 Zpep = read.csv("Programs/git/pepStat/misc/peptides_zpep.csv") 
 feat = peptide(psSet1)
@@ -105,7 +105,7 @@ rd7<-DTrack(range=IRanges(start=dPos,width=0),#end=dPos),
 		ranges.highlight=range(ra3), lwd.highlight=0,
 		alpha.highlight=0.5,legend=TRUE)
 
-plotTracks(trackList=c(rpext,rpref,rs,rpr,rs,ra2,rd6,ra3),from=120, to=150)#, type=c("p", "smooth"),showFeatureId=TRUE)
+plotTracks(trackList=c(rpext,rpref,rs,rpr,rs,ra2,rd6,ra3),from=0, to=150)#, type=c("p", "smooth"),showFeatureId=TRUE)
 plotTracks(c(rpr), from=1, to=500)
 #####
 save(pepMicroarrayEx,file="/home/rsautera/workspace/BioC/devel/Pviz/data/pepMicroarrayEx.rda")

@@ -280,7 +280,107 @@ convertPep<-function(rd=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
 
 }
 
-.zTable<-function()
+
+
+####
+## SIV_2
+####
+.SIV_2<-function(fastaFile,orderFile)
+{ 
+  #Parse fasta file
+  IN<-file(fastaFile,open="r")
+  lineList<-list()
+  while(length(oneLine <- readLines(IN, n = 4, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
+  {
+	  lineList<-c(lineList,oneLine)
+  }
+  close(IN)
+  #Store sequences
+  seq1<-lineList[2] #239
+  seq2<-lineList[4] #660
+  
+  #Parse order file
+  IN<-file(orderFile,open="r")
+  lineList<-list()
+  while(length(oneLine <- readLines(IN, n = -1, warn = FALSE)))
+  {
+	  lineList<-c(lineList,oneLine)
+  }  
+  close(IN)
+  lineList<-lineList[which(lineList!="" & lineList!=" ")]
+  
+  #Lists to create RangedData
+  peptideList<-c()
+  startList<-c()
+  alignedList<-c()
+  mac239List<-E660List<-c()
+  z1sumList<-z2sumList<-z3sumList<-z4sumList<-z5sumList<-c()
+  
+  idx<-1
+  while(idx<=length(lineList))
+  {
+    if(substr(strsplit(lineList[[idx]],"\\.")[[1]][2],1,1)=="1") #if the peptide is specific to its sequence
+	{
+	  #Get the sequences
+	  #Couples are given with E660 before mac239
+	  pep1<-strsplit(lineList[[idx]]," ")[[1]][2]
+	  pep2<-strsplit(lineList[[idx+1]]," ")[[1]][2]
+	  
+	  peptideList<-c(peptideList,pep2,pep1)
+	  alignedList<-c(alignedList,pep2,pep2) #mac239 is the ref
+	  #Get the positions
+	  start<-regexpr(pep2, seq1)[[1]]
+	  startList<-c(startList,start,start) #the pos are given relative to mac239 coordinates
+      #ID
+	  mac239List<-c(mac239List,TRUE,FALSE)
+	  E660List<-c(E660List,FALSE,TRUE)
+	  #zScores
+	  z1sumList<-c(z1sumList,.zSum(pep2,"z1"),.zSum(pep1,"z1"))  
+	  z2sumList<-c(z2sumList,.zSum(pep2,"z2"),.zSum(pep1,"z2"))
+	  z3sumList<-c(z3sumList,.zSum(pep2,"z3"),.zSum(pep1,"z3"))
+	  z4sumList<-c(z4sumList,.zSum(pep2,"z4"),.zSum(pep1,"z4"))
+	  z5sumList<-c(z5sumList,.zSum(pep2,"z5"),.zSum(pep1,"z5"))
+	  
+	  idx<-idx+2
+    }
+	else
+	{
+		#Sequence
+		pep<-strsplit(lineList[[idx]]," ")[[1]][2]
+		align<-pep
+		peptideList<-c(peptideList,pep)
+		alignedList<-c(alignedList,pep)
+		#Position
+		start<-regexpr(pep, seq1)[[1]]
+		startList<-c(startList,start)
+		#ID
+		mac239List<-c(mac239List,TRUE)
+		E660List<-c(E660List,TRUE)
+		#zSum
+		z1sumList<-c(z1sumList,.zSum(pep,"z1"))  
+		z2sumList<-c(z2sumList,.zSum(pep,"z2"))
+		z3sumList<-c(z3sumList,.zSum(pep,"z3"))
+		z4sumList<-c(z4sumList,.zSum(pep,"z4"))
+		z5sumList<-c(z5sumList,.zSum(pep,"z5"))
+		
+		idx<-idx+1	
+	}
+
+	
+	
+  }
+  nrd<-RangedData(ranges=IRanges(start=startList,width=15), aligned=alignedList,
+		  mac239=mac239List, E660=E660List,
+		  z1sum=z1sumList,z2sum=z2sumList,z3sum=z3sumList,z4sum=z4sumList,z5sum=z5sumList)
+  rownames(nrd)<-peptideList
+#  nrd<-nrd[order(start(nrd)),]
+  return(nrd)
+}
+
+#
+# Returns the zZsum for the AAString
+#
+.zSum<-function(AAString, Z)
 {
   rownames<-c("A","R","N","D","C","Q","E","G","H","I","L","K","M","F","P","S","T","W","Y","V")
   colnames<-c("z1","z2","z3","z4","z5")
@@ -308,6 +408,12 @@ convertPep<-function(rd=HIV.db:::pep_hxb2,filename=NULL,refScale=NULL)
   dim(zTable)<-c(20,5)
   dimnames(zTable)<-list(rownames,colnames)
 
-  return(zTable)
+  total<-0
+  for(AA in 1:nchar(AAString))
+  {
+    total<-total+zTable[substr(AAString,AA,AA),Z]
+  }
+  
+  return(total)
 
 }
