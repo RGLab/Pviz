@@ -15,7 +15,7 @@
 \usage{
 	ATrack(range=NULL, start=NULL, end=NULL, width=NULL, group,
 		id, strand="*", chromosome="chrR", genome="all", stacking="squish", 
-		name="ATrack", protein="prot", fun, selectFun, ...)
+		name="ATrack", fun, selectFun, ...)
 }
 
 \arguments{
@@ -51,8 +51,6 @@
     \item{name}{Character scalar of the track's name used in the title
     panel when plotting.}
     
-    \item{protein}{Name of the protein.}
-    
     \item{\dots}{Additional items which will all be interpreted as further
     display parameters.}
     
@@ -86,8 +84,6 @@
 
 \section{Slots}{
   \describe{
-    \item{\code{protein}:}{Object of class \code{"character"},
-      a name for the protein.}
     \item{\code{stacking}:}{Object of class \code{"character"},
       inherited from class \code{\linkS4class{StackedTrack}}}
     \item{\code{stacks}:}{Object of class \code{"numeric"},

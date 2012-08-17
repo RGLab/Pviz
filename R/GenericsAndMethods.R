@@ -247,7 +247,7 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 			probeArray$intensityInterval <- cut(intVec,breaks=length(color),right=F,include.lowest=T)[1:nrow(probeArray)]
 			
 			idCex<-getPar(GdObject,"cex")
-			seqCex<-idCex/nSeq
+			seqCex<-idCex*5/nSeq
 
 			#calculate x,y coordinates of each character
 			by(probeArray,probeArray$posInterval,function(curData){

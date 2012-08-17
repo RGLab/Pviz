@@ -1,24 +1,22 @@
 ###
 # DataTrack class with defaulted chromosome/genome
-# @protein: slot for the protein name (label/lengend + subsetting purposes)
 ###
 setClass("DTrack",
     contains="DataTrack",
-	representation=representation(protein="character"),
+	representation=representation(),
 	prototype=prototype(
 			dp=DisplayPars(ranges.highlight=GRanges())
 	)
 )
 
-setMethod("initialize", "DTrack", function(.Object, protein, ...){
-    .Object@protein<-protein
+setMethod("initialize", "DTrack", function(.Object, ...){
     .Object <- callNextMethod() #Call the initialize function of Gviz::DataTrack
 	return(.Object)
 })
 
 ## DTrack constructor
 DTrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, data, chromosome="chrR", strand="*",
-		genome="all", name="DTrack", protein="prot", ...)
+		genome="all", name="DTrack", ...)
 {
 	#Create a DataTrack object
 	GvizDataTrack<-DataTrack(range=range, start=start, end=end, width=width,
@@ -31,22 +29,20 @@ DTrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, data, chromosom
 			genome=GvizDataTrack@genome,
 			strand=GvizDataTrack@strand, 
 			name=GvizDataTrack@name, 
-			protein=protein, ...)
+			...)
 }
 
 
 ###
 # AnnotationTrack
-# @protein: slot for the protein name
 ###
 setClass("ATrack",
 		contains="AnnotationTrack",
-		representation=representation(protein="character"),
+		representation=representation(),
 		prototype()
 )
 
-setMethod("initialize", "ATrack", function(.Object, protein, ...){
-			.Object@protein<-protein
+setMethod("initialize", "ATrack", function(.Object, ...){
 			.Object <- callNextMethod() #Call the initialize function of Gviz::AnnotationTrack
 			return(.Object)
 		})
@@ -54,7 +50,7 @@ setMethod("initialize", "ATrack", function(.Object, protein, ...){
 ## ATrack constructor
 ATrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, group,
 		id, strand="*", chromosome="chrR", genome="all", stacking="squish", 
-		name="ATrack", protein="prot", fun, selectFun, ...)
+		name="ATrack", fun, selectFun, ...)
 {
 	#Create an AnnotationTrack object
 	GvizAnnotationTrack<-AnnotationTrack(range=range, start=start, end=end, width=width,
@@ -66,21 +62,19 @@ ATrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, group,
 			genome=GvizAnnotationTrack@genome,
 			name=GvizAnnotationTrack@name,
 			stacking=GvizAnnotationTrack@stacking,
-			protein=protein, ...)
+			...)
 }
 
 
 ###
 # ProbeTrack
 # Track to display intensities of peptide microarray datas
-# @protein: slot for the protein name
 ###
 #Intensity is not supported by R basic display tool (use Cairo)
 setClass("ProbeTrack", contains = "GdObject", 
 		representation(sequence="list",
 				intensity = "list",
-				probeStart = "list",
-				protein="character"
+				probeStart = "list"
 		),
 		prototype(
 				sequence=list(),
@@ -88,18 +82,17 @@ setClass("ProbeTrack", contains = "GdObject",
 				probeStart = list(),
 				dp = DisplayPars(
 						color = "black",
-						color=heat.colors(8, alpha = 1),
+						color=rev(heat.colors(8, alpha = 1)),
 						size = 2, #it displays better when slightly bigger than annotation tracks
-						cex=5
+						cex=1
 				)
 		)
 )
 
-setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, probeStart, protein, name, ...)
+setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, probeStart, name, ...)
 		{
 			.makeParMapping()
 			.Object@name<-name
-			.Object@protein<-protein
 			.Object@sequence<-sequence
 			.Object@intensity<-intensity
 			.Object@probeStart<-probeStart
@@ -108,7 +101,7 @@ setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, pro
 		})
 
 ## ProbeTrack constructor
-ProbeTrack <- function(sequence, intensity, probeStart, protein=NULL, name="ProbeTrack", ...)
+ProbeTrack <- function(sequence, intensity, probeStart, name="ProbeTrack", ...)
 {
 	if(missing(probeStart)) stop("Need probeStart argument to know where to plot the data on the genome")
 	if(missing(sequence)) stop("Need sequence argument to know what to plot")
@@ -126,7 +119,7 @@ ProbeTrack <- function(sequence, intensity, probeStart, protein=NULL, name="Prob
 		stop("sequence has to be character vector!")
 	if(any(unlist(lapply(intensity,class))!="numeric")||any(!unlist(lapply(probeStart,class))%in%c("numeric","integer")))
 		stop("intensity and probeStart have to be numeric vectors!")
-	new("ProbeTrack", sequence=sequence,intensity=intensity,probeStart=probeStart, protein=protein, name=name, ...)
+	new("ProbeTrack", sequence=sequence,intensity=intensity,probeStart=probeStart, name=name, ...)
 }
 
 ###

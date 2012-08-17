@@ -15,7 +15,7 @@
 
 \usage{
 DTrack(range = NULL, start = NULL, end = NULL, width = NULL, data, chromosome = "chrR", 
-strand = "*", genome = "all", name = "DTrack", protein = "prot", ...)
+strand = "*", genome = "all", name = "DTrack", ...)
 }
 
 \arguments{
@@ -50,8 +50,6 @@ strand = "*", genome = "all", name = "DTrack", protein = "prot", ...)
     character vector of column names that point into the element
     metadata of the \code{range} object. Naturally, this is only
     supported if \code{range} is of class \code{\linkS4class{GRanges}}.}
-    
-  \item{protein}{Name of the protein.}
 
   \item{name}{Character scalar of the track's name used in the title
     panel when plotting.}
@@ -91,8 +89,6 @@ strand = "*", genome = "all", name = "DTrack", protein = "prot", ...)
       coordinates for the data values. The length of the object needs to
       be identical to the number of columns of the data matrix in the
       \code{data} slot.}
-	\item{\code{protein}:}{Object of class \code{"character"},
-		a name for the protein.}
     \item{\code{range}:}{Object of class \code{"GRangesOrIRanges"},
       inherited from class \code{\linkS4class{RangeTrack}}}
     \item{\code{chromosome}:}{Object of class \code{"character"},
@@ -139,8 +135,7 @@ Renan Sauteraud
 }
 \examples{
 # Object construction
-dTrack <- DTrack(start=seq(1,1000, len=100), width=10, data=matrix(runif(400), nrow=4),
-protein="gp120", name="random data")
+dTrack <- DTrack(start=seq(1,1000, len=100), width=10, data=matrix(runif(400), nrow=4), name="random data")
 
 # Plotting
 plotTracks(dTrack)

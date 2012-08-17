@@ -4,8 +4,7 @@
 %\VignettePackage{Pviz}
 \documentclass[11pt]{article}
 \usepackage{Sweave}
-\usepackage{underscore}
-
+\SweaveOpts{keep.source=FALSE}
 
 \author{Renan Sauteraud\footnote{rsautera@fhcrc.org}}
 
@@ -17,114 +16,152 @@
 
 \newpage
 
-\section{Example of plot}
-<<init>>=
-library(HIV.db)
+\section{Introduction}
+\texttt{Pviz} is an R package inspired by and depending on \texttt{Gviz}. It
+introduces new types of track and extends the existing ones in order to deal
+with amino-acid based data.
+
+This package keeps most of the mechanics of \texttt{Gviz}, notably the use of
+\texttt{DisplayParameters} and the same plotting function: \texttt{plotTracks}.
+Therefore, the user is invited to refer to \texttt{Gviz} help pages and vignette
+for more information and examples.
+
+As with any R package, it should first be loaded in the session
+<<loading-package>>=
 library(Pviz)
-
-################## Get reference scale from alignment
-alignObj<-readAlign()
-refScale<-alignObj[[1]]
-refSeq<-alignObj[[2]]
-
-################## Load database
-HIV_db<-loadFeatures(ref="env")
-envBase<-getFeature(HIV_db)
-envStart=getHXB2Coordinates(envBase)[1,][1] 
-envEnd=getHXB2Coordinates(envBase)[1,][2] 
-
-################## Getting Features from database for annotation
-proteins<-getFeature(HIV_db,category="protein",start=envStart,end=envEnd,frame=getFrame(envBase))
-antis<-getEpitope(envBase,name=c("VRC01"))
-helix<-getChildren(envBase,category=c("helix"))
 @
 
-<<ProteinAxisTrack>>=
-## ProteinAxisTrack using the extended coordinates system
-rpext<-ProteinAxisTrack(littleTicks=TRUE)
-## ProteinAxisTrack with coordinates relative to the reference
-rpref<-ProteinAxisTrack(refScale=refScale, adNC=TRUE)
+
+
+\section{Gviz tracks}
+\texttt{Pviz} extends and uses the most common classes of \texttt{Gviz} to make
+them easier to use with amino acid data. We removed the requirement for a genome
+and a chromosome when creating these tracks. Moreover, they support the
+functions defined in Pviz.
+
+\subsection{ATrack}
+\texttt{ATrack} extends Gviz's \texttt{AnnotationTrack} and behave the same way.
+However, it does not require to specify a chromosome and a genome. Please refer
+to \texttt{Gviz} documentation for more details about \texttt{AnnotationTrack}
+and the available \texttt{DisplayParameters}.
+<<ATrack-example, fig=TRUE, height=1.5>>=
+at<-ATrack(start=c(250,480), end=c(320,520), name="Annotations")
+plotTracks(at, from=1, to=600)
 @
 
-<<SequenceTrack>>=
-sTrack<-SequenceTrack(refSeq)
+\subsection{DTrack}
+Naturally \texttt{DTrack} extends Givz's \texttt{DataTrack}. Here again, please
+refer to \texttt{Gviz} documentation for details on how to use
+\texttt{DataTrack}.
+
+Some example data are available in this package. Expression frequency for
+peptide in hxb2 envelope.
+<<DTrack-example, fig=TRUE, height=4>>=
+data(PvizVignette)
+dt<-DTrack(data=freqEx, start=posEx, width=15, name="Freq")
+plotTracks(dt, from=1, to=850, type="l")
 @
 
-<<ProbeTrack>>=
-data(pepMicroarrayEx)
 
-p1Track<-ProbeTrack(pepMicroarrayEx$probeSeq, pepMicroarrayEx$probeFreq, pepMicroarrayEx$probePos
-		, protein="gp120", name="sequence(B)")
+\section{Pviz new track types}
+\texttt{Pviz} introduce some new track types to deal with amino-acid based data.
+The new tracks look can be modified using the \texttt{DisplayParameters} and
+will most of the time offer the same options as the ones available for
+\texttt{Gviz} tracks.
+
+\subsection{ProteinAxisTrack}
+This track acts as a replacement for the \texttt{GenomeAxisTrack}. I comes
+with the same coloration, transparency and other customization options but loses
+the DNA representation for a simple segment.
+
+<<ProteinAxisTrack-basic, fig=TRUE, height=1.1>>=
+pat<-ProteinAxisTrack()
+plotTracks(pat, from=1, to=850)	
 @
 
-<<ATrack, echo=TRUE>>=
-a2Track<-ATrack(id=proteins@values@unlistData@listData[["name"]],start=start(proteins),end=end(proteins),genome='hxb2',name="Protein",protein="gp120",fill="navyblue",size=1)
-a3Track<-ATrack(id=helix@values@unlistData@listData[["name"]],start=start(helix),end=end(helix),genome='hxb2',name="Helix",fill="orange",protein="gp120")
-a6Track<-ATrack(id=antis@values@unlistData@listData[["name"]],start=start(antis),end=end(antis),genome='hxb2',name="Epitopes",fill="gray",protein="gp120")
+Just like in \texttt{GenomeAxisTrack}, it is possible to use littleTicks to get
+a more precise scale. Moreover, because \texttt{Pviz}, has been made to deal
+with peptides and protein, the option addNc can display indicators for N-term
+and C-term ends on the axis.
+
+<<ProteinAxisTrack-options, fig=TRUE, height=1.1>>=
+pat<-ProteinAxisTrack(addNC=TRUE, littleTicks=TRUE)
+plotTracks(pat, from=1, to=850)
 @
 
-<<DTrack, echo=TRUE>>=
-data(pepExprEx)
-library(IRanges)
-d6Track<-DTrack(range=IRanges(start=pepExprEx$dPos,width=1),groups=rownames(pepExprEx$dExpr),data=pepExprEx$dExpr,genome='hxb2',protein="gp120",col=c("orange","gray"),cex=1)
+\subsection{SequenceTrack}
+This new track simply displays a selected sequence. It can takes both
+\texttt{AAstring} or regular \texttt{string} and thus, can be used for both
+AA and DNA sequences.
+
+Note that the first amino acid of the sequence should correspond to the first
+position of any other element you choose to display at the same time.
+
+The previously loaded dataset also contains an \texttt{AAstring} object for the
+sequence of the envelope of hxb2.
+<<SequenceTrack-basic, fig=TRUE, height=1.5>>=
+seqEx
+st<-SequenceTrack(sequence=seqEx, name="env")
+plotTracks(trackList=c(pat,st), from=1, to=50)
 @
 
-<<Plotting>>=
-plotTracks(trackList=c(rpext,rpref,sTrack,a2Track,a3Track,a6Track,p1Track,d6Track), from=1, to=150, type=c("p","smooth"), stacking="dense",legend=TRUE, showFeatureId=TRUE)
+Note that if the plotting ranges becomes too wide, the letters will stack and it
+may lead to an unreadable output. The default parameters usually allows to plot
+up to 100-150 characters depending on your graphic window. The user can modify
+the character size via the DisplayParameters system when creating the track
+with the cex argument.
+Here is an example of bad plotting.
+<<SequenceTrack-unreadable, fig=TRUE, height=1.5>>=
+plotTracks(trackList=c(pat,st), cex=0.5)
 @
 
-\section{Using the extended coordinates system}
+Althought the character expansion has been set to less than 1. The ranges are
+still too wide for a correct display.
 
-The extended coordinate system is based on a multiple alignment. It is a scale from 0 to the length of the alignmenat (i.e: reference sequence + gaps).
-
-The refScale is a scale used to translate coordinates between the extended system and the normal system (which is based uniquely on the reference sequence length).
-
-\subsection{Data formating}
-In the following examples, hxb2 is the reference sequence and is aligned with different subtypes.
-
-First, get the refScale:
-<<refScale>>=
-alignObj<-readAlign(filename=system.file("extdata/alignment.fasta", package="Pviz"))
-refScale<-alignObj[[1]]
-refSeq<-alignObj[[2]]
+\subsection{ProbeTrack}
+This track is designed to display peptide microarray data. It draws each peptide
+relative to its position in the sequence and enclose them in rectangles colored
+depending on their intensity.
+To create this track, the sequence of the peptides, their intensity or
+frequency and their starting position have to be passed as arguments.
+<<ProbeTrack-basic, fig=TRUE, width=9, height=4.5>>=
+pt<-ProbeTrack(pepEx, freqEx, posEx) 
+plotTracks(pt, from=460, to=530)
 @
 
-Now, the refScale can be used to translate coordiantes into the extended system.
-
-Example of loading HIV_db using extended coordinates. 
-<<coord2ext>>=
-library(HIV.db)
-HIV_db<-loadFeatures(ref="env", refScale=refScale)
-envBase<-getFeature(HIV_db)
+Unlike in \texttt{SequenceTrack}, the size of the characters in each peptide
+sequence depends on the plotting ranges (the user can still choose to change the
+size manually) and if the ranges become too wide, the characters will appear as
+dots or completely disappear instead of stacking on top of each other.
+While it loses the sequence information, it might be relevant to locate regions
+where peptides have high intensity/frequency.
+<<ProbeTrack-wide-ranges, fig=TRUE, width=9, height=4.5>>=
+plotTracks(pt)
 @
 
-The positions in envBase are the ones observed in the alignment.
-
-To translate all the positions in pep_hxb2, use convertPep().
-<<convertPep>>=
-data(pep_hxb2)
-nrd<-convertPep(rd=pep_hxb2)
+For a more explicit display, a legend has been implemented for this track and
+can be called during track creation or in the plotting function. The legend
+displays the scale of intensities.
+<<ProbeTrack-legend, fig=TRUE, width=9, height=4.5>>=
+plotTracks(pt, from=460, to=530, legend=TRUE)	
 @
 
-nrd is pep_hxb2 with updated ranges, aligned and trimmed columns.
 
-To convert coordinates into the extended system, use coord2ext() with the refScale defined earlier:
-<<coord2ext>>=
-start<-coord2ext(c(200,450), ref=refScale)
-start
+
+
+
+\section{Example of plot}
+Naturally, the interest of \texttt{Pviz}, just like its parent \texttt{Gviz}
+is the display of multiple tracks at once.
+Here is an example of what \texttt{Pviz} can render, using the tracks previously
+created.
+<<complex-plot, fig=TRUE, width=9, height=6>>=
+pt<-ProbeTrack(pepEx, freqEx, posEx, cex=0.8) 
+plotTracks(trackList=c(pat, st, at, pt, dt), from=460, to=530, type="l", legend=TRUE)
 @
 
-\subsection{Plotting with both coordinates system}
-All objects used to create tracks should be in extended coordinate system.
-<<plotting, echo=TRUE, results=verbatim>>=
-sTrack<-SequenceTrack(refSeq)
-pax1<-ProteinAxisTrack()
-pax2<-ProteinAxisTrack(refScale=refScale, col.gap="blue")
-proteins<-getFeature(HIV_db,category="protein",start=envStart,end=envEnd,frame=getFrame(envBase))
-aTrack<-ATrack(id=proteins@values@unlistData@listData$name,start=start(proteins),end=end(proteins))
-aTrack<-ATrack(id=helix@values@unlistData@listData$name,start=start(helix),end=end(helix),fill="red")
-plotTracks(c(pax1,pax2,sTrack,aTrack), from=1, to=160)
-@
-The first axis track displays the extended scale, while the second displays the reference coordinates, it also shows the gaps in the reference sequence with respect of the alignment.
+
+
+
 
 \end{document}

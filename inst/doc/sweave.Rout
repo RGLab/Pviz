@@ -1,0 +1,50 @@
+
+R Under development (unstable) (2012-06-19 r59582) -- "Unsuffered Consequences"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+
+Welcome at Fri Aug 17 13:49:40 2012 
+BiocInstaller version 1.4.4, ?biocLite for help
+> #R CMD BATCH '--args rnw="Pviz.Rnw"' sweave.R
+> args=(commandArgs(TRUE))
+> if (length(args)>0) for(i in 1:length(args)) eval(parse(text=args[[i]]))
+> Sweave(rnw)
+Writing to file Pviz.tex
+Processing code chunks with options ...
+ 1 : echo term verbatim (label = loading-package)
+Loading required package: grid
+Loading required package: Gviz
+ 2 : echo term verbatim pdf  (label = ATrack-example)
+ 3 : echo term verbatim pdf  (label = DTrack-example)
+ 4 : echo term verbatim pdf  (label = ProteinAxisTrack-basic)
+ 5 : echo term verbatim pdf  (label = ProteinAxisTrack-options)
+ 6 : echo term verbatim pdf  (label = SequenceTrack-basic)
+ 7 : echo term verbatim pdf  (label = SequenceTrack-unreadable)
+ 8 : echo term verbatim pdf  (label = ProbeTrack-basic)
+ 9 : echo term verbatim pdf  (label = ProbeTrack-wide-ranges)
+10 : echo term verbatim pdf  (label = ProbeTrack-legend)
+11 : echo term verbatim pdf  (label = complex-plot)
+
+You can now run (pdf)latex on ‘Pviz.tex’
+> q(save="no")
+
+Goodbye at  Fri Aug 17 13:49:55 2012 
+> proc.time()
+   user  system elapsed 
+ 13.956   0.172  14.475 

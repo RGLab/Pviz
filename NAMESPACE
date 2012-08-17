@@ -1,15 +1,18 @@
-importClassesFrom(HIV.db, HivFeature)
+##
+## NAMESPACE
+##
 importClassesFrom(GenomicRanges, GRanges)
-importClassesFrom(IRanges, IRanges)
 importFrom(GenomicRanges, GRanges)
+importClassesFrom(IRanges, IRanges)
 importFrom(IRanges, IRanges, gaps, restrict)
-importFrom(HIV.db, coord2ext)
+importClassesFrom(HIV.db, HivFeature)
+importMethodsFrom(PEP.db, coord2ext)
+importFrom(PEP.db, readAlign)
 importFrom(grDevices, extendrange)
 
-exportClasses("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack")
-exportMethods("start",
-		"end")
-export("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack",
-		"coord2ext",
-		"readAlign",
-		"convertPep")
+#Export Pviz stuff
+export("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack")
+exportMethods("start","end")
+#Export imported stuff
+exportMethods("coord2ext")
+export("readAlign")

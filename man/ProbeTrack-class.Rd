@@ -23,7 +23,7 @@ Objects can be created using the constructor function \code{ProbeTrack}.
 }
 
 \usage{
-ProbeTrack(sequence, intensity, probeStart, protein, name = "ProbeTrack", ...)
+ProbeTrack(sequence, intensity, probeStart, name = "ProbeTrack", ...)
 }
 
 \arguments{
@@ -36,8 +36,6 @@ ProbeTrack(sequence, intensity, probeStart, protein, name = "ProbeTrack", ...)
   \item{probeStart}{\code{"list"} of \code{"character"},
   	list of start for the sequences in the slot \code{sequences}.}
   	
-  \item{protein}{Name of the protein.}
-
   \item{name}{Character scalar of the track's name used in the title
     panel when plotting.}
     
@@ -60,8 +58,6 @@ ProbeTrack(sequence, intensity, probeStart, protein, name = "ProbeTrack", ...)
     \item{\code{probeStart}:}{Object of class \code{"list"},
     	a list of \code{"numeric"}. Peptides microarray start.
     	The length of the list needs to be identical to the length of the lists in the \code{sequence} and \code{intensity} slots.}
-    \item{\code{protein}:}{Object of class \code{"character"},
-    	a name for the protein.}
     \item{\code{dp}:}{Object of class\code{\linkS4class{DisplayPars}}, 
     	inherited from class \code{\linkS4class{GdObject}}}
     \item{\code{name}:}{Object of class \code{"character"}, 
