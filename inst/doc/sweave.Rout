@@ -19,7 +19,7 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 
-Welcome at Fri Aug 17 13:49:40 2012 
+Welcome at Fri Aug 17 15:07:42 2012 
 BiocInstaller version 1.4.4, ?biocLite for help
 > #R CMD BATCH '--args rnw="Pviz.Rnw"' sweave.R
 > args=(commandArgs(TRUE))
@@ -44,7 +44,7 @@ Loading required package: Gviz
 You can now run (pdf)latex on ‘Pviz.tex’
 > q(save="no")
 
-Goodbye at  Fri Aug 17 13:49:55 2012 
+Goodbye at  Fri Aug 17 15:07:56 2012 
 > proc.time()
    user  system elapsed 
- 13.956   0.172  14.475 
+ 13.780   0.172  13.971 
