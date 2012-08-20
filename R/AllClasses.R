@@ -149,11 +149,11 @@ SequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NU
 {
 	sequence<-as.character(sequence) #In case the user provide AA/DNAstring
 	#chr and genome are needded to use methods inherited from RangeTrack
-	if(!is.null(anno))
-	{	
-		#Get the sequence from HivFeature object
-		sequence<-getHivFeatureSeq(anno)
-	}
+#	if(!is.null(anno))
+#	{	
+#		#Get the sequence from HivFeature object
+#		sequence<-getHivFeatureSeq(anno)
+#	}
 	if(is.null(sequence))
 	{
 		stop("A sequence or HivFeature object should be supplied")

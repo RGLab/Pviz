@@ -7,6 +7,7 @@ Maintainer: Renan Sauteraud <rsautera@fhcrc.org>
 Description: Uses the HIV.db and pepStat packages respectively to obtain annotation and intensity data on desired proteins, etc. and allows their display via GenomeGraphs
 License: Artistic-2.0
 Depends: R(>= 2.15.0),methods,grid, Gviz
-Imports: Biobase (>= 2.5.5), HIV.db, GenomicRanges, IRanges, PEP.db
+Imports: Biobase (>= 2.5.5), HIV.db, GenomicRanges, IRanges
+Suggests: PEP.db
 biocViews: Microarray, Preprocessing, Statistics
 URL: http://www.rglab.org

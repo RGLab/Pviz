@@ -30,8 +30,8 @@ setMethod("start", "ProbeTrack", function(x) if(length(x)) as.integer(ProbeStart
 setMethod("end", "ProbeTrack", function(x) start(x))
 
 #HivFeature Accessors
-setGeneric("getHivFeatureSeq", def=function(HIVF) standardGeneric("getHivFeatureSeq"))
-setMethod("getHivFeatureSeq", def=function(HIVF) as.character(HIVF@HIV_db$hxb2AA[1,]))
+#setGeneric("getHivFeatureSeq", def=function(HIVF) standardGeneric("getHivFeatureSeq"))
+#setMethod("getHivFeatureSeq", def=function(HIVF) as.character(HIVF@HIV_db$hxb2AA[1,]))
 
 setGeneric("getSequenceSeq", def=function(GdObject) standardGeneric("getSequenceSeq"))
 setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
@@ -388,6 +388,10 @@ setMethod(Gviz:::"drawGD", signature("ProteinAxisTrack"), function(GdObject, min
 		#For reference coordinates system
 		if(!is.null(refScale))
 		{
+			if("PEP.db" %in% loadedNamespaces()!=TRUE)
+			{
+				stop("PEP.db has to be loaded in order to use a refScale")
+			}
 			minB<-refScale[as.numeric(minBase)]
 			maxB<-min(refScale[as.numeric(maxBase)],refScale[length(refScale)], na.rm=TRUE)
 			axRange<-c(minB,maxB)
