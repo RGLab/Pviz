@@ -123,10 +123,10 @@ ProbeTrack <- function(sequence, intensity, probeStart, name="ProbeTrack", ...)
 }
 
 ###
-# SequenceTrack
+# ProteinSequenceTrack
 # Track for the amino acid sequence of the reference
 ###
-setClass("SequenceTrack",
+setClass("ProteinSequenceTrack",
 		contains="RangeTrack",
 		representation(
 				sequence="character"),
@@ -135,17 +135,17 @@ setClass("SequenceTrack",
 		)
 )
 
-setMethod("initialize", "SequenceTrack", function(.Object, sequence, ...)
+setMethod("initialize", "ProteinSequenceTrack", function(.Object, sequence, ...)
 {
 	.makeParMapping()
-	#.Object <- Gviz:::.updatePars(.Object, "SequenceTrack")
+	#.Object <- Gviz:::.updatePars(.Object, "ProteinSequenceTrack")
 	.Object@sequence<-sequence
 	.Object <- callNextMethod()
   return(.Object)
 })
 
-## SequenceTrack constructor
-SequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, name="Sequence", chromosome="chrR", genome="all", ...)
+## ProteinSequenceTrack constructor
+ProteinSequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NULL, name="Sequence", chromosome="chrR", genome="all", ...)
 {
 	sequence<-as.character(sequence) #In case the user provide AA/DNAstring
 	#chr and genome are needded to use methods inherited from RangeTrack
@@ -164,7 +164,7 @@ SequenceTrack<-function(sequence=NULL, anno=NULL, range=NULL, start=NULL, end=NU
     if(is.null(end)){end<-nchar(sequence)}
     range<-GRanges(IRanges(start=start, end=end), seqnames=chromosome)
   }
-	new("SequenceTrack", sequence=sequence, name=name, range=range, chromosome=chromosome, genome=genome, ...)
+	new("ProteinSequenceTrack", sequence=sequence, name=name, range=range, chromosome=chromosome, genome=genome, ...)
 }
 
 

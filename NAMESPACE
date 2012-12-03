@@ -10,8 +10,11 @@ importFrom(IRanges, IRanges, gaps, restrict)
 #importFrom(PEP.db, readAlign)
 importFrom(grDevices, extendrange)
 
+#To fix unloadNamespace errors
+#importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack)
+
 #Export Pviz stuff
-export("DTrack","ATrack","ProbeTrack","SequenceTrack","ProteinAxisTrack")
+export("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack")
 exportMethods("start","end")
 #Export imported stuff
 #exportMethods("coord2ext")

@@ -3,9 +3,12 @@
 #####
 .drawHighlight<-function(GdObject, minBase, maxBase)
 {
+	minBase<-as.numeric(minBase)
+	maxBase<-as.numeric(maxBase)
 	#gpar for grid.rect
 	HRanges<- getPar(GdObject, "ranges.highlight")
 	if(length(HRanges))
+	#if not GRanges, assume it is PE
 		HRanges<-restrict(HRanges, start=minBase, end=maxBase)
 	if(length(HRanges))
 	{
@@ -71,7 +74,7 @@
 #####
 .makeParMapping <- function()
 {
-	classes <-  c("ATrack", "DTrack", "ProbeTrack","SequenceTrack","ProteinAxisTrack")
+	classes <-  c("ATrack", "DTrack", "ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack")
 	defs <-  sapply(classes, function(x) as(getClassDef(x)@prototype@dp, "list"), simplify=FALSE)
 	if(is.null(.parMappings))
 		assignInNamespace(x=".parMappings", value=defs, ns="Pviz")

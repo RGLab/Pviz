@@ -4,13 +4,14 @@
 %\VignettePackage{Pviz}
 \documentclass[11pt]{article}
 \usepackage{Sweave}
+\usepackage{hyperref}
 \usepackage[hmargin=2cm, vmargin=3cm]{geometry}
 \SweaveOpts{keep.source=FALSE}
 
+\title{The Pviz User Guide}
 \author{Renan Sauteraud\footnote{rsautera@fhcrc.org}}
 
 \begin{document}
-\title{The Pviz User Guide}
 \maketitle
 
 \tableofcontents
@@ -90,7 +91,7 @@ pat<-ProteinAxisTrack(addNC=TRUE, littleTicks=TRUE)
 plotTracks(pat, from=1, to=850)
 @
 
-\subsection{SequenceTrack}
+\subsection{ProteinSequenceTrack}
 This new track simply displays a selected sequence. It can takes both
 \texttt{AAstring} or regular \texttt{string} and thus, can be used for both
 AA and DNA sequences.
@@ -100,9 +101,9 @@ position of any other element you choose to display at the same time.
 
 The previously loaded dataset also contains an \texttt{AAstring} object for the
 sequence of the envelope of hxb2.
-<<SequenceTrack-basic, fig=TRUE, height=1.5>>=
+<<ProteinSequenceTrack-basic, fig=TRUE, height=1.5>>=
 seqEx
-st<-SequenceTrack(sequence=seqEx, name="env")
+st<-ProteinSequenceTrack(sequence=seqEx, name="env")
 plotTracks(trackList=c(pat,st), from=1, to=50)
 @
 
@@ -112,8 +113,8 @@ up to 100-150 characters depending on your graphic window. The user can modify
 the character size via the DisplayParameters system when creating the track
 with the cex argument.
 Here is an example of bad plotting.
-<<SequenceTrack-unreadable, fig=TRUE, height=1.5>>=
-plotTracks(trackList=c(pat,st), cex=0.5)
+<<ProteinSequenceTrack-unreadable, fig=TRUE, height=1.5>>=
+plotTracks(trackList=c(pat,st), from=1, to=850, cex=0.5)
 @
 
 Althought the character expansion has been set to less than 1. The ranges are
@@ -130,7 +131,7 @@ pt<-ProbeTrack(pepEx, freqEx, posEx)
 plotTracks(pt, from=460, to=530)
 @
 
-Unlike in \texttt{SequenceTrack}, the size of the characters in each peptide
+Unlike in \texttt{ProteinSequenceTrack}, the size of the characters in each peptide
 sequence depends on the plotting ranges (the user can still choose to change the
 size manually) and if the ranges become too wide, the characters will appear as
 dots or completely disappear instead of stacking on top of each other.

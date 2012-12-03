@@ -292,9 +292,9 @@ setMethod(Gviz:::"drawGD", signature("ProbeTrack"), function(GdObject, minBase, 
 })
 
 ####
-## drawGD for SequenceTrack
+## drawGD for ProteinSequenceTrack
 ####
-setMethod(Gviz:::"drawGD", signature("SequenceTrack"), function(GdObject, minBase, maxBase, vpPosition, prepare=FALSE, subset=TRUE) 
+setMethod(Gviz:::"drawGD", signature("ProteinSequenceTrack"), function(GdObject, minBase, maxBase, vpPosition, prepare=FALSE, subset=TRUE) 
 {
 	seq<-getSequenceSeq(GdObject)
 	lenSeq<-nchar(seq)
