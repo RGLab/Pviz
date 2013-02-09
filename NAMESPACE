@@ -1,21 +1,17 @@
-##
-## NAMESPACE
-##
+#
+# NAMESPACE
+#
 importClassesFrom(GenomicRanges, GRanges)
 importFrom(GenomicRanges, GRanges)
 importClassesFrom(IRanges, IRanges)
 importFrom(IRanges, IRanges, gaps, restrict)
-#importClassesFrom(HIV.db, HivFeature)
-#importMethodsFrom(PEP.db, coord2ext)
-#importFrom(PEP.db, readAlign)
 importFrom(grDevices, extendrange)
 
 #To fix unloadNamespace errors
 #importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack)
 
 #Export Pviz stuff
+exportClasses("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack")
 export("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack")
-exportMethods("start","end")
-#Export imported stuff
-#exportMethods("coord2ext")
-#export("readAlign")
+export("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack","readAlign")
+exportMethods("start","end","coord2ext")

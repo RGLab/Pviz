@@ -2,13 +2,36 @@
 \alias{readAlign}
 
 \title{
-Read multiple alignments in fasta format.
+	Function to get the reference sequence and scale from an alignment file.
 }
 
 \description{
-The function reads an alignment and returns a reference scale (refScale) and a reference sequence that can be used in loadFeatures to change the coordinate system.
+	\code{readAlign} reads a fasta alignment file and returns the reference sequence with gaps 
+	and the scale to convert the sequence coordinates into the extended system.
 }
 
-\seealso{
-\code{\link[PEP.db]{readAlign}}
+\usage{
+	readAlign(filename=NULL)
 }
+
+\arguments{
+	\item{filename}{The name of the alignment fasta file used to extract the new information.
+		The first sequence of the fasta file must be the reference.}
+}
+
+\value{
+	A list with the reference scale as the first element and the reference sequence in second position.
+}
+
+\author{
+Renan Sauteraud
+}
+
+\examples{
+#Extract the refScale and gapped sequence from an alignment.
+res<-readAlign(system.file("extdata/alignments/Musclehxb2_vaccineInsert.fasta", package="Pviz"))
+res[[1]] #The refScale
+res[[2]] #The gapped reference sequence
+}
+
+\keyword{functions}
