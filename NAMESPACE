@@ -6,12 +6,9 @@ importFrom(GenomicRanges, GRanges)
 importClassesFrom(IRanges, IRanges)
 importFrom(IRanges, IRanges, gaps, restrict)
 importFrom(grDevices, extendrange)
-
-#To fix unloadNamespace errors
-#importClassesFrom(Gviz, AnnotationTrack, DataTrack, GenomeAxisTrack)
+importFrom(biovizBase, getBioColor)
 
 #Export Pviz stuff
 exportClasses("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack")
-export("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack")
 export("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack","readAlign")
 exportMethods("start","end","coord2ext")

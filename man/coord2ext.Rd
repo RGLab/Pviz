@@ -17,9 +17,10 @@
 	\describe{
 		\item{\code{signature(obj = "numeric")}}{
 			Convert a vector of \code{"numeric"} into the extended coordinates system.}
-
 		\item{\code{signature(obj = "RangedData")}}{
-			Convert the start and end  of a \code{\linkS4class{RangedData}} object into the extended coordinate system.}
+			Convert the start and end of a \code{\linkS4class{RangedData}} object into the extended coordinate system.}
+		\item{\code{signature(obj = "IRanges")}}{
+			Convert the start and end of an \code{\linkS4class{IRanges}} into the extended coordinates system.}
  	}
  }
 

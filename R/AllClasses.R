@@ -1,6 +1,6 @@
-###
-# DataTrack class with defaulted chromosome/genome
-###
+####
+## DataTrack class with defaulted chromosome/genome
+####
 setClass("DTrack",
     contains="DataTrack",
 	representation=representation(),
