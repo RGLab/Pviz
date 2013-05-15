@@ -85,34 +85,30 @@
 ###
 # Read alignment from fasta file to get scales and sequences
 ###
-#readAlign<-function(filename=NULL){
-#        ## EASY MODE:
-#        ## Assume first line is >HXB2, second is hxb2 seq, third is >newSeqID,  fourth is newSeq seq
-#        if(is.null(filename)){filename<-system.file("extdata/alignment.fasta", package="PEP.db")}
-#        alFile<-file(filename,open="r")
-#        lineList<-list()
-#        while(length(oneLine <- readLines(alFile, n = 2, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
-#        {
-#                lineList<-c(lineList,oneLine)
-#        }           
-#        close(alFile) #
-#        refSeq<-lineList[[2]]
-#            
-#        len<-nchar(refSeq)
-#        gapCnt<-0
-#        refScale<-numeric(len)
-#        for(i in 1:len)
-#        {   
-#                if(substr(refSeq,i,i)=="-")
-#                {   
-#                        gapCnt<-gapCnt+1
-#                }           
-#                refScale[i]<-i-gapCnt
-#        }           
-#        refObj<-list()
-#        refObj[[1]]<-refScale #the scale
-#        refObj[[2]]<-refSeq   #the sequence with gaps
-#        return(refObj)
-readAlign<-function(){
-  return(TRUE)
+readAlign<-function(filename=NULL){
+        if(is.null(filename)){filename<-system.file("extdata/alignment.fasta", package="PEP.db")}
+        alFile<-file(filename,open="r")
+        lineList<-list()
+        while(length(oneLine <- readLines(alFile, n = 2, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
+        {
+                lineList<-c(lineList,oneLine)
+        }           
+        close(alFile) #
+        refSeq<-lineList[[2]]
+            
+        len<-nchar(refSeq)
+        gapCnt<-0
+        refScale<-numeric(len)
+        for(i in 1:len)
+        {   
+                if(substr(refSeq,i,i)=="-")
+                {   
+                        gapCnt<-gapCnt+1
+                }           
+                refScale[i]<-i-gapCnt
+        }           
+        refObj<-list()
+        refObj[[1]]<-refScale #the scale
+        refObj[[2]]<-refSeq   #the sequence with gaps
+        return(refObj)
 }
