@@ -312,7 +312,6 @@ setMethod("drawGD", signature("ProteinSequenceTrack"), function(GdObject, minBas
 		endSpace<-paste(endSpace,collapse="")
 		seq<-paste(seq,endSpace,sep="")
 	}
-        browser()
 	cex<-getPar(GdObject,"cex")
 	fontsize<-getPar(GdObject,"fontsize")
 	fontfamily<-getPar(GdObject,"fontfamily")
