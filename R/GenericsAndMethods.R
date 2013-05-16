@@ -348,7 +348,7 @@ setMethod("drawGD", signature("ProteinSequenceTrack"), function(GdObject, minBas
     AA_ALPHABET<-c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K",
                    "M", "F", "P", "S", "T", "W", "Y", "V", "U", "B", "Z", "X",
                    "*", "-", "+")
-    fcol <- getBioColor("AA_ALPHABET")
+    fcol <- .dpOrDefault(GdObject, "fontcolor", getBioColor(type="AA_ALPHABET"))
     delta <- maxBase-minBase
     if(delta==0)
         return(invisible(GdObject))

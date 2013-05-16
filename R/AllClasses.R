@@ -131,7 +131,8 @@ setClass("ProteinSequenceTrack",
 		representation(
 				sequence="character"),
 		prototype(
-				dp = DisplayPars(size=0.25)
+		          dp = DisplayPars(size=0.25,
+                          fontcolor=getBioColor(type="AA_ALPHABET"))
 		)
 )
 
