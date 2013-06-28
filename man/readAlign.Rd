@@ -2,11 +2,11 @@
 \alias{readAlign}
 
 \title{
-	Function to get the reference sequence and scale from an alignment file.
+	Function to get the gapped sequence and scale from an alignment file.
 }
 
 \description{
-	\code{readAlign} reads a fasta alignment file and returns the reference sequence with gaps 
+	\code{readAlign} reads a fasta alignment file and returns the sequence with gaps 
 	and the scale to convert the sequence coordinates into the extended system.
 }
 
@@ -21,7 +21,7 @@
 }
 
 \value{
-	A list with the reference scale as the first element and the reference sequence in second position.
+	A list with the scale (a \code{numeric} vector) as the first element and the reference sequence (a \code{character}) in second position.
 }
 
 \author{
