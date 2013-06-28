@@ -14,13 +14,13 @@
 	{
 
 		#DisplayPars
-		alpha.highlight<- Gviz:::.dpOrDefault(GdObject, "alpha.highlight", 1)
-		color.highlight<- Gviz:::.dpOrDefault(GdObject, "col.highlight", "transparent")
-		fill.highlight<- Gviz:::.dpOrDefault(GdObject, "fill.highlight", "grey")
-		lwd.highlight<- Gviz:::.dpOrDefault(GdObject, "lwd.highlight", 1)
+		alpha.highlight<- .dpOrDefault(GdObject, "alpha.highlight", 1)
+		color.highlight<- .dpOrDefault(GdObject, "col.highlight", "transparent")
+		fill.highlight<- .dpOrDefault(GdObject, "fill.highlight", "grey")
+		lwd.highlight<- .dpOrDefault(GdObject, "lwd.highlight", 1)
 		#Overlay on top of the legend or not
-		legend<-Gviz:::.dpOrDefault(GdObject, "legend", FALSE)
-		hLegend<-Gviz:::.dpOrDefault(GdObject, "legend.highlight", FALSE)
+		legend<-.dpOrDefault(GdObject, "legend", FALSE)
+		hLegend<-.dpOrDefault(GdObject, "legend.highlight", FALSE)
 		if(!hLegend && legend)
 		{
 			lSpace <- getPar(GdObject, ".__verticalSpace")
@@ -85,16 +85,16 @@
 ###
 # Read alignment from fasta file to get scales and sequences
 ###
-readAlign<-function(filename=NULL){
+readAlign<-function(filename=NULL, seqLine=2){
         if(is.null(filename)){filename<-system.file("extdata/alignment.fasta", package="PEP.db")}
         alFile<-file(filename,open="r")
         lineList<-list()
-        while(length(oneLine <- readLines(alFile, n = 2, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
+        while(length(oneLine <- readLines(alFile, n = -1, warn = FALSE))) #n=4 means read four lines (negative value for whole file)
         {
                 lineList<-c(lineList,oneLine)
         }           
         close(alFile) #
-        refSeq<-lineList[[2]]
+        refSeq<-lineList[[seqLine]]
             
         len<-nchar(refSeq)
         gapCnt<-0

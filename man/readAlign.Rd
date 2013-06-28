@@ -11,12 +11,13 @@
 }
 
 \usage{
-	readAlign(filename=NULL)
+	readAlign(filename=NULL, seqLine=2)
 }
 
 \arguments{
 	\item{filename}{The name of the alignment fasta file used to extract the new information.
 		The first sequence of the fasta file must be the reference.}
+	\item{seqLine}{A \code{numeric}. The index of the line on which the target sequence is located.}
 }
 
 \value{
