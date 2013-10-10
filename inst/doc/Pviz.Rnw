@@ -1,12 +1,18 @@
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{The Pviz users guide}
-%\VignetteDepends{Pviz}
+%\VignetteDepends{Pviz, knitr}
 %\VignetteKeywords{Visualization}
 %\VignettePackage{Pviz}
 \documentclass[11pt]{article}
-\usepackage{Sweave}
+
 \usepackage{hyperref}
 \usepackage[hmargin=2cm, vmargin=3cm]{geometry}
-\SweaveOpts{keep.source=FALSE}
+
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(tidy=TRUE)
+@
+
 
 \title{The Pviz User Guide}
 \author{Renan Sauteraud\footnote{rsautera@fhcrc.org}}
@@ -42,23 +48,23 @@ and a chromosome when creating these tracks. Moreover, they support the
 functions defined in Pviz.
 
 \subsection{ATrack}
-\texttt{ATrack} extends Gviz's \texttt{AnnotationTrack} and behave the same way.
+\texttt{ATrack} extends Gviz's \texttt{AnnotationTrack} and behaves the same way.
 However, it does not require to specify a chromosome and a genome. Please refer
 to \texttt{Gviz} documentation for more details about \texttt{AnnotationTrack}
 and the available \texttt{DisplayParameters}.
-<<ATrack-example, fig=TRUE, height=1.5>>=
+<<ATrack-example, fig.height=1.5>>=
 at<-ATrack(start=c(250,480), end=c(320,520), name="Annotations")
 plotTracks(at, from=1, to=600)
 @
 
 \subsection{DTrack}
-Naturally \texttt{DTrack} extends Givz's \texttt{DataTrack}. Here again, please
+Naturally \texttt{DTrack} extends Gviz's \texttt{DataTrack}. Here again, please
 refer to \texttt{Gviz} documentation for details on how to use
 \texttt{DataTrack}.
 
 Some example data are available in this package. Expression frequency for
 peptide in hxb2 envelope.
-<<DTrack-example, fig=TRUE, height=4>>=
+<<DTrack-example, fig.height=4>>=
 data(PvizVignette)
 dt<-DTrack(data=freqEx, start=posEx, width=15, name="Freq")
 plotTracks(dt, from=1, to=850, type="l")
@@ -76,7 +82,7 @@ This track acts as a replacement for the \texttt{GenomeAxisTrack}. I comes
 with the same coloration, transparency and other customization options but loses
 the DNA representation for a simple segment.
 
-<<ProteinAxisTrack-basic, fig=TRUE, height=1.1>>=
+<<ProteinAxisTrack-basic, fig.height=1.1>>=
 pat<-ProteinAxisTrack()
 plotTracks(pat, from=1, to=850)	
 @
@@ -86,7 +92,7 @@ a more precise scale. Moreover, because \texttt{Pviz}, has been made to deal
 with peptides and protein, the option addNc can display indicators for N-term
 and C-term ends on the axis.
 
-<<ProteinAxisTrack-options, fig=TRUE, height=1.1>>=
+<<ProteinAxisTrack-options, fig.height=1.1>>=
 pat<-ProteinAxisTrack(addNC=TRUE, littleTicks=TRUE)
 plotTracks(pat, from=1, to=850)
 @
@@ -101,24 +107,28 @@ position of any other element you choose to display at the same time.
 
 The previously loaded dataset also contains an \texttt{AAstring} object for the
 sequence of the envelope of hxb2.
-<<ProteinSequenceTrack-basic, fig=TRUE, height=1.5>>=
+<<ProteinSequenceTrack-basic, fig.height=1.5>>=
 seqEx
 st<-ProteinSequenceTrack(sequence=seqEx, name="env")
-plotTracks(trackList=c(pat,st), from=1, to=50)
+plotTracks(trackList=c(pat,st), from=1, to=40)
 @
 
-Note that if the plotting ranges becomes too wide, the letters will stack and it
-may lead to an unreadable output. The default parameters usually allows to plot
-up to 100-150 characters depending on your graphic window. The user can modify
-the character size via the DisplayParameters system when creating the track
-with the cex argument.
-Here is an example of bad plotting.
-<<ProteinSequenceTrack-unreadable, fig=TRUE, height=1.5>>=
-plotTracks(trackList=c(pat,st), from=1, to=850, cex=0.5)
+%Note that if the plotting ranges becomes too wide, the letters will stack and it
+%may lead to an unreadable output. The default parameters usually allows to plot
+%up to 100-150 characters depending on your graphic window. The user can modify
+%the character size via the DisplayParameters system when creating the track
+%with the cex argument.
+%Here is an example of bad plotting.
+The sequence track for proteins handles overplotting the same way it does it for nucleotides.
+If the plotting range becomes wider, only the color code will be displayed. Once it becomes too big to even show these colors, a straight line will be displaed. Naturally, the character size will also influence what can be displayed in the graphic window.
+
+<<ProteinSequenceTrack-unreadable, fig.height=1.5>>=
+st<-ProteinSequenceTrack(sequence=seqEx, name="env", cex=0.5)
+plotTracks(trackList=c(pat,st), from=1, to=850)
 @
 
-Althought the character expansion has been set to less than 1. The ranges are
-still too wide for a correct display.
+Although the character expansion has been set to less than 1. The ranges are
+still too wide for a correct display and only a straight line will be displayed.
 
 \subsection{ProbeTrack}
 This track is designed to display peptide microarray data. It draws each peptide
@@ -126,7 +136,7 @@ relative to its position in the sequence and enclose them in rectangles colored
 depending on their intensity.
 To create this track, the sequence of the peptides, their intensity or
 frequency and their starting position have to be passed as arguments.
-<<ProbeTrack-basic, fig=TRUE, width=9, height=4.5>>=
+<<ProbeTrack-basic, fig.width=9, fig.height=4.5>>=
 pt<-ProbeTrack(pepEx, freqEx, posEx) 
 plotTracks(pt, from=460, to=530)
 @
@@ -137,14 +147,14 @@ size manually) and if the ranges become too wide, the characters will appear as
 dots or completely disappear instead of stacking on top of each other.
 While it loses the sequence information, it might be relevant to locate regions
 where peptides have high intensity/frequency.
-<<ProbeTrack-wide-ranges, fig=TRUE, width=9, height=4.5>>=
+<<ProbeTrack-wide-ranges, fig.width=9, fig.height=4.5>>=
 plotTracks(pt)
 @
 
 For a more explicit display, a legend has been implemented for this track and
 can be called during track creation or in the plotting function. The legend
 displays the scale of intensities.
-<<ProbeTrack-legend, fig=TRUE, width=9, height=4.5>>=
+<<ProbeTrack-legend, fig.width=9, fig.height=4.5>>=
 plotTracks(pt, from=460, to=530, legend=TRUE)	
 @
 
@@ -157,7 +167,7 @@ Naturally, the interest of \texttt{Pviz}, just like its parent \texttt{Gviz}
 is the display of multiple tracks at once.
 Here is an example of what \texttt{Pviz} can render, using the tracks previously
 created.
-<<complex-plot, fig=TRUE, width=9, height=6>>=
+<<complex-plot, fig.width=9, fig.height=6>>=
 pt<-ProbeTrack(pepEx, freqEx, posEx, cex=0.8) 
 plotTracks(trackList=c(pat, st, at, pt, dt), from=460, to=530, type="l", legend=TRUE)
 @

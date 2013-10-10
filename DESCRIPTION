@@ -8,4 +8,6 @@ Description: Pviz adapts the Gviz package for protein information and data. Uses
 License: Artistic-2.0
 Depends: R(>= 2.15.0), Gviz
 Imports: Biobase (>= 2.5.5), GenomicRanges, IRanges, biovizBase, methods
+Suggests: knitr
 biocViews: Microarray, Preprocessing, Statistics
+VignetteBuilder: knitr
