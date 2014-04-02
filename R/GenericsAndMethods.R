@@ -40,51 +40,18 @@ setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
 setGeneric("getNC", def=function(obj) standardGeneric("getNC"))
 setMethod("getNC", def=function(obj) obj@addNC)
 
-.dpOrDefault<-function(GdObject, par, default=NULL){
-  val<-getPar(GdObject, par)
-  if(is.null(val)){
-    val<-default
-  }
-  return(val)
-}
-
 
 ##################### drawGD redefinition
-####
-## drawGD for DTrack
-## enable rectangle overlay
-####
-setMethod("drawGD", signature("DTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...)
-{
-	if(!prepare)
-	{
-		.drawHighlight(GdObject, minBase, maxBase)
-	}
+setMethod("drawGD", signature("DTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...){
 	GdObject <- callNextMethod(GdObject,minBase=minBase, maxBase=maxBase, prepare=prepare, subset=subset) #Call the drawGD method of Gviz::DataTrack	
-
 	return(invisible(GdObject))
 })
 
-####
-## drawGD for ATrack
-## enable rectangle overlay
-####
-setMethod("drawGD", signature("ATrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...)
-{
-	if(!prepare)
-	{
-		.drawHighlight(GdObject, minBase, maxBase)
-	}
+setMethod("drawGD", signature("ATrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...){
 	GdObject <- callNextMethod(GdObject,minBase=minBase, maxBase=maxBase, prepare=prepare, subset=subset) #Call the drawGD method of Gviz::AnnotationTrack	
-	
 	return(invisible(GdObject))
 })
 
-
-####
-## drawGD for ProbeTrack
-## legend is the scale of intensities
-####
 setMethod("drawGD", signature("ProbeTrack"), function(GdObject, minBase, maxBase, vpPosition, prepare=FALSE, subset=TRUE) {
   #Select only what is in range
   if(subset){
@@ -108,8 +75,7 @@ setMethod("drawGD", signature("ProbeTrack"), function(GdObject, minBase, maxBase
   totalRows<-length(probeStart)
   
   ### PREPARE MODE
-  if(prepare)
-  {
+  if(prepare){
     ##viewport for multipe probe subtracks
     pushViewport(viewport(xscale=c(minBase,maxBase),yscale=c(0,1)))#,clip=TRUE))
     popViewport(1)
@@ -290,17 +256,53 @@ setMethod("drawGD", signature("ProbeTrack"), function(GdObject, minBase, maxBase
   
 })
 
-####
-## drawGD for ProteinSequenceTrack
-####
-#setMethod("drawGD", signature("ProteinSequenceTrack"), function(GdObject, minBase, maxBase, vpPosition, prepare=FALSE, subset=TRUE) 
-setMethod("drawGD", signature("ProteinSequenceTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, ...) {
-	seq<-getSequenceSeq(GdObject)
+# ####
+# ## drawGD for ProteinSequenceTrack
+# ####
+ setMethod("drawGD", signature("ProteinSequenceTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, ...) {
+#   xscale <- c(minBase, maxBase)
+#   pushViewport(viewport(xscale = xscale, clip = TRUE))
+#   if(prepare){
+#     popViewport(1)
+#     return(invisible(GdObject))
+#   }
+#   AA_ALPHABET<-c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", "U", "B", "Z", "X",  "*", "-", "+")
+#   fcol <- .dpOrDefault(GdObject, "fontcolor", getBioColor(type="AA_ALPHABET"))
+#   lwidth <- max(as.numeric(convertUnit(stringWidth(AA_ALPHABET),"inches")))
+#   perLetter <- Gviz:::vpLocation()$isize["width"]/(maxBase-minBase+1)
+#   diff <- Gviz:::.pxResolution(.dpOrDefault(GdObject, "min.width", 2), coord="x")
+#   
+#   seq <- substr(GdObject@sequence, minBase, maxBase)
+#   sequence <- unlist(strsplit(seq, ""))
+#   at <- seq((minBase+0.5), maxBase - 1 + 0.5, by=1)
+#   if(perLetter<0.5){
+#     sequence[c(1, length(sequence))] <- ""
+#   }
+#   print(sequence)
+#   print(fcol)
+#   col <- fcol[toupper(sequence)]
+#   if(lwidth<perLetter && !.dpOrDefault(GdObject, "noLetters", FALSE)){
+#     print(at)
+#     grid.rect(gp=gpar(col="orange", lwd=10))
+#     print(col)
+#     grid.text(x=unit(at, "native"), y=0.5, label=sequence, gp=gpar(col=col))
+#   } else {
+#     print("grid.rect")
+#     grid.rect(gp=gpar(fill="red"))
+#     print(col)
+#     print(unit(at, "native"))
+#     grid.rect(x=unit(at, "native"), y=0.05, width=unit(1, "native"), height=0.9,
+#               gp=gpar(fill=col, col="white"), just=c(0.5, 0))
+#   }
+#   popViewport(1)
+#   return(invisible(GdObject))
+# })
+# 
+  seq<-getSequenceSeq(GdObject)
 	lenSeq<-nchar(seq)
 	if(maxBase-minBase<1){ maxBase<-lenSeq}
 	seq<-substr(seq,minBase,maxBase)
-	if(maxBase>lenSeq)
-	{
+	if(maxBase>lenSeq){
 		endSpace<-rep(" ", maxBase-lenSeq)
 		endSpace<-paste(endSpace,collapse="")
 		seq<-paste(seq,endSpace,sep="")
@@ -316,62 +318,41 @@ setMethod("drawGD", signature("ProteinSequenceTrack"), function(GdObject, minBas
                     ))
 	
 	### PREPARE MODE
-	if(prepare)
-	{
+	if(prepare){
 		popViewport(1)
 		return(invisible(GdObject))
 	}
-	
-	### DRAWING MODE
-	## Highlighted regions
-	#.drawHighlight(GdObject, minBase, maxBase)
-	
-	#fontcolor<-getPar(GdObject,"fontcolor")
 	len<-nchar(seq)	
-##	#print each char of the sequence
-##	for(cnt in 1:len)
-##	{
-##		char<-substr(seq,cnt,cnt)
-##		vpLetter<-viewport(x=(1/(len-1))*(cnt-1),
-##				width=1/(len-1))
-##		pushViewport(vpLetter)
-##		grid.text(label=char,gp=gpar(cex=cex,col=fontcolor))
-##		popViewport(1)
-##	}
-    AA_ALPHABET<-c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K",
+  AA_ALPHABET<-c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K",
                    "M", "F", "P", "S", "T", "W", "Y", "V", "U", "B", "Z", "X",
                    "*", "-", "+")
-    fcol <- .dpOrDefault(GdObject, "fontcolor", getBioColor(type="AA_ALPHABET"))
-    delta <- maxBase-minBase
-    if(delta==0)
-        return(invisible(GdObject))
-    lwidth <- max(as.numeric(convertUnit(stringWidth(AA_ALPHABET),"inches")))
-    perLetter <- Gviz:::vpLocation()$isize["width"]/(maxBase-minBase+1)
-    diff <- Gviz:::.pxResolution(.dpOrDefault(GdObject, "min.width", 2), coord="x")
-    if(diff>1 || (maxBase-minBase+1)>=10e6){
-        grid.lines(x=unit(c(minBase, maxBase), "native"), y=0.5,
-                   #gp=gpar(col=.dpOrDefault(GdObject, "col", "darkgray"),
-                               #lwd=.dpOrDefault(GdObject, "lwd", 2)))
-                   gp=gpar(col=getPar(GdObject, "col"),
-                               lwd=getPar(GdObject, "lwd")))
-    }else{
-
-        sequence <- unlist(strsplit(seq, ""))
-        at <- seq((minBase+0.5), maxBase - 1 + 0.5, by=1)
-        sequence[sequence=="-"] <- ""
-        if(perLetter<0.5)
-            sequence[c(1, length(sequence))] <- ""
-        col <- fcol[toupper(sequence)]
-        if(lwidth<perLetter && !.dpOrDefault(GdObject, "noLetters", FALSE)){
-            grid.text(x=unit(at, "native"), y=0.5, label=sequence,
-                      gp=gpar(col=col))
-        } else {
+  fcol <- .dpOrDefault(GdObject, "fontcolor", getBioColor(type="AA_ALPHABET"))
+  delta <- maxBase-minBase
+  if(delta==0)
+    return(invisible(GdObject))
+  lwidth <- max(as.numeric(convertUnit(stringWidth(AA_ALPHABET),"inches")))
+  perLetter <- Gviz:::vpLocation()$isize["width"]/(maxBase-minBase+1)
+  diff <- Gviz:::.pxResolution(.dpOrDefault(GdObject, "min.width", 2), coord="x")
+  if(diff>1 || (maxBase-minBase+1)>=10e6){
+      grid.lines(x=unit(c(minBase, maxBase), "native"), y=0.5,
+                 gp=gpar(col=getPar(GdObject, "col"),
+                         lwd=getPar(GdObject, "lwd")))
+  }else{
+    sequence <- unlist(strsplit(seq, ""))
+    at <- seq((minBase+0.5), maxBase - 1 + 0.5, by=1)
+#     sequence[sequence=="-"] <- ""
+    if(perLetter<0.5){
+      sequence[c(1, length(sequence))] <- ""
+    }
+    col <- fcol[toupper(sequence)]
+    if(lwidth<perLetter && !.dpOrDefault(GdObject, "noLetters", FALSE)){
+      grid.text(x=unit(at, "native"), y=0.5, label=sequence,
+                gp=gpar(col=col))
+      } else {
             grid.rect(x=unit(at, "native"), y=0.05, width=unit(1, "native"), height=0.9,
                       gp=gpar(fill=col, col="white"), just=c(0.5, 0))
-        }
-    }
-
-
+      }
+  }
 	popViewport(1)
 	return(invisible(GdObject))
 })	
@@ -400,8 +381,7 @@ setMethod("drawGD", signature("ProteinAxisTrack"), function(GdObject, minBase, m
 	
 	### PREPARE MODE
 	#Figure out the optimal vertical size
-	if(prepare)
-	{
+	if(prepare){
 		nsp <- if(is.null(.dpOrDefault(GdObject, "scale", NULL))){
 					(sum(tickHeight, pyOff*2, textYOff*2 + (as.numeric(convertHeight(stringHeight("1"),"native"))/2)*cex)*2*1.3)/pres["y"]
 				} else {
@@ -622,49 +602,3 @@ setMethod("drawGD", signature("ProteinAxisTrack"), function(GdObject, minBase, m
 	return(invisible(GdObject))
 })
 ######################################## End drawGD
-
-setGeneric("coord2ext", def=function(obj, refScale){ standardGeneric("coord2ext") })
-
-# Convert the coordinates of an object into the extended coordinate given a scale
-# Input: An object and a reference scale
-# Output: an object of the same type with coordinates in extended system
-setMethod("coord2ext", signature=(obj="numeric"), function(obj, refScale){   
-  extVec<-sapply(obj, function(x){
-    min(
-      if(x<0){
-        x
-      }else if(x==0){
-        which(refScale==1)
-      }else if(x>refScale[length(refScale)]){
-        which(refScale==refScale[length(refScale)])
-      }else if(length(which(refScale==x))){
-        which(refScale==x)
-      }else{        
-        NaN
-      })})
-  extVec<-extVec[!is.na(extVec)]
-  return(extVec)
-})          
-
-setMethod("coord2ext", signature=(obj="RangedData"), function(obj, refScale){
-  if(start(obj)[[1]]==0) { start(obj)[[1]]=1 } #To avoid Inf values
-      
-  extStart<-coord2ext(start(obj),refScale)
-  extEnd<-coord2ext(end(obj),refScale)
-  #assign new start coordinates after end to avoid width<0 issues
-  end(obj)<-extEnd
-  start(obj)<-extStart
-  return(obj)
-})
-
-setMethod("coord2ext", signature=(obj="IRanges"), function(obj, refScale){
-  if(start(obj)[[1]]==0) { start(obj)[[1]]=1 } #To avoid Inf values
-
-  extStart<-coord2ext(start(obj),refScale)
-  extEnd<-coord2ext(end(obj),refScale)
-  #assign new start coordinates after end to avoid width<0 issues
-  end(obj)<-extEnd
-  start(obj)<-extStart
-  return(obj)
-})
-

@@ -1,0 +1,14 @@
+#
+# NAMESPACE
+#
+importClassesFrom(GenomicRanges, GRanges)
+importFrom(GenomicRanges, GRanges)
+importClassesFrom(IRanges, IRanges)
+importFrom(IRanges, IRanges, gaps, restrict)
+importFrom(grDevices, extendrange)
+importFrom(biovizBase, getBioColor)
+
+#Export Pviz stuff
+exportClasses("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack")
+export("DTrack","ATrack","ProbeTrack","ProteinSequenceTrack","ProteinAxisTrack","readAlign")
+exportMethods("start","end","coord2ext")

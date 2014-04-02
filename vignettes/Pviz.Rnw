@@ -35,7 +35,7 @@ Therefore, the user is invited to refer to \texttt{Gviz} help pages and vignette
 for more information and examples.
 
 As with any R package, it should first be loaded in the session
-<<loading-package>>=
+<<loading-package, message=FALSE>>=
 library(Pviz)
 @
 
@@ -62,11 +62,12 @@ Naturally \texttt{DTrack} extends Gviz's \texttt{DataTrack}. Here again, please
 refer to \texttt{Gviz} documentation for details on how to use
 \texttt{DataTrack}.
 
-Some example data are available in this package. Expression frequency for
-peptide in hxb2 envelope.
+Some example data are available in the data package PEP.db. Expression frequency
+for peptide in hxb2 envelope.
 <<DTrack-example, fig.height=4>>=
+library(PEP.db)
 data(PvizVignette)
-dt<-DTrack(data=freqEx, start=posEx, width=15, name="Freq")
+dt<-DTrack(data=freqEx, start=startEx, width=15, name="Freq")
 plotTracks(dt, from=1, to=850, type="l")
 @
 
@@ -99,17 +100,15 @@ plotTracks(pat, from=1, to=850)
 
 \subsection{ProteinSequenceTrack}
 This new track simply displays a selected sequence. It can takes both
-\texttt{AAstring} or regular \texttt{string} and thus, can be used for both
-AA and DNA sequences.
+\texttt{AAstring} or regular \texttt{character}.
 
 Note that the first amino acid of the sequence should correspond to the first
 position of any other element you choose to display at the same time.
 
-The previously loaded dataset also contains an \texttt{AAstring} object for the
-sequence of the envelope of hxb2.
+The previously loaded dataset also contains the sequence of the envelope of 
+hxb2 to be used as an example.
 <<ProteinSequenceTrack-basic, fig.height=1.5>>=
-seqEx
-st<-ProteinSequenceTrack(sequence=seqEx, name="env")
+st<-ProteinSequenceTrack(sequence=hxb2_seq, name="env")
 plotTracks(trackList=c(pat,st), from=1, to=40)
 @
 
@@ -123,7 +122,7 @@ The sequence track for proteins handles overplotting the same way it does it for
 If the plotting range becomes wider, only the color code will be displayed. Once it becomes too big to even show these colors, a straight line will be displaed. Naturally, the character size will also influence what can be displayed in the graphic window.
 
 <<ProteinSequenceTrack-unreadable, fig.height=1.5>>=
-st<-ProteinSequenceTrack(sequence=seqEx, name="env", cex=0.5)
+st<-ProteinSequenceTrack(sequence=hxb2_seq, name="env", cex=0.5)
 plotTracks(trackList=c(pat,st), from=1, to=850)
 @
 
@@ -133,13 +132,19 @@ still too wide for a correct display and only a straight line will be displayed.
 \subsection{ProbeTrack}
 This track is designed to display peptide microarray data. It draws each peptide
 relative to its position in the sequence and enclose them in rectangles colored
-depending on their intensity.
+depending on their frequency of binding event or intensity. It is useful to spot
+differences between clades at a specific position or get an overview of the 
+regions with antibody binding activity, depending on the scale used while 
+plotting.
+
 To create this track, the sequence of the peptides, their intensity or
-frequency and their starting position have to be passed as arguments.
+frequency and their starting position have to be passed as arguments. All three
+arguments should be of the same length.
 <<ProbeTrack-basic, fig.width=9, fig.height=4.5>>=
-pt<-ProbeTrack(pepEx, freqEx, posEx) 
-plotTracks(pt, from=460, to=530)
+pt<-ProbeTrack(pepEx, freqEx, startEx) 
+plotTracks(pt, from=460, to=560)
 @
+
 
 Unlike in \texttt{ProteinSequenceTrack}, the size of the characters in each peptide
 sequence depends on the plotting ranges (the user can still choose to change the
@@ -148,32 +153,27 @@ dots or completely disappear instead of stacking on top of each other.
 While it loses the sequence information, it might be relevant to locate regions
 where peptides have high intensity/frequency.
 <<ProbeTrack-wide-ranges, fig.width=9, fig.height=4.5>>=
-plotTracks(pt)
+plotTracks(pt, legend = TRUE)
 @
-
 For a more explicit display, a legend has been implemented for this track and
 can be called during track creation or in the plotting function. The legend
-displays the scale of intensities.
-<<ProbeTrack-legend, fig.width=9, fig.height=4.5>>=
-plotTracks(pt, from=460, to=530, legend=TRUE)	
-@
+displays the scale of frequencies.
 
-
-
-
-
+\newpage
 \section{Example of plot}
 Naturally, the interest of \texttt{Pviz}, just like its parent \texttt{Gviz}
 is the display of multiple tracks at once.
 Here is an example of what \texttt{Pviz} can render, using the tracks previously
 created.
 <<complex-plot, fig.width=9, fig.height=6>>=
-pt<-ProbeTrack(pepEx, freqEx, posEx, cex=0.8) 
-plotTracks(trackList=c(pat, st, at, pt, dt), from=460, to=530, type="l", legend=TRUE)
+pt<-ProbeTrack(pepEx, freqEx, startEx, cex=0.2)
+plotTracks(trackList=c(pat, st, at, pt, dt), from=460, to=560, type="l", legend=TRUE)
 @
 
-
-
-
+\newpage
+\section{sessionInfo}
+<<sessionInfo>>=
+sessionInfo()
+@
 
 \end{document}
