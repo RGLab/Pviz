@@ -5,7 +5,8 @@
 \alias{ProbeTrack-class}
 \title{ProbeTrack}
 \usage{
-ProbeTrack(sequence, intensity, probeStart, name = "ProbeTrack", ...)
+ProbeTrack(sequence, intensity, probeStart, restab = NULL, group = NULL,
+  name = "ProbeTrack", ...)
 }
 \arguments{
 \item{sequence}{A \code{character} vector. The sequence of peptides to
@@ -17,7 +18,14 @@ baseline corrected intensity for the peptides.}
 \item{probeStart}{A \code{numeric} vector. The start position of the peptides.}
 
 \item{name}{A \code{character}. The name of the track used in the title panel
-  when plotting}
+when plotting}
+
+\item{restab}{A \code{data.frame} containing all the above parameters, as
+outputted by \code{pepStat}'s \code{restab} function.}
+
+\item{group}{A \code{character}. The group to display on the \code{ProbeTrak}.
+  This is only required when \code{restab} is not NULL. See details section
+  for more information.}
 
 \item{...}{Arguments to be passed to
 \code{DataTrack}.}
@@ -28,7 +36,10 @@ probe on an arrayas predicted by \code{pepStat}'s function \code{makeCalls}.
 }
 \details{
 The vectors for the arguments \code{sequence}, \code{freq} and
-\code{probeStart} should be of the same length.
+\code{probeStart} should be of the same length. If \code{restab} is provided,
+the three previous arguments will be ignored and \code{group} must be
+specified. \code{group} must be a valid column name in \code{restab},
+\code{data.frame}.
 }
 \section{Slots}{
 
@@ -45,5 +56,7 @@ Renan Sauteraud
 }
 \seealso{
 \code{\link{GdObject}}
+
+\code{restab}
 }
 

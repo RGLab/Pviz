@@ -147,23 +147,47 @@ setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, pro
 #' @param probeStart A \code{numeric} vector. The start position of the peptides.
 #' @param name A \code{character}. The name of the track used in the title panel
 #'   when plotting
+#' @param restab A \code{data.frame} containing all the above parameters, as
+#'   outputted by \code{pepStat}'s \code{restab} function.
+#' @param group A \code{character}. The group to display on the \code{ProbeTrak}.
+#'   This is only required when \code{restab} is not NULL. See details section 
+#'   for more information.
 #' 
 #' @details
 #' The vectors for the arguments \code{sequence}, \code{freq} and 
-#' \code{probeStart} should be of the same length.
+#' \code{probeStart} should be of the same length. If \code{restab} is provided,
+#' the three previous arguments will be ignored and \code{group} must be 
+#' specified. \code{group} must be a valid column name in \code{restab}, 
+#' \code{data.frame}.
+#' 
+#' @seealso \code{restab}
 #' 
 #' @export
-ProbeTrack <- function(sequence, intensity, probeStart, name="ProbeTrack", ...){
-	if(missing(probeStart)) stop("Need probeStart argument to know where to plot the data on the genome")
-	if(missing(sequence)) stop("Need sequence argument to know what to plot")
-	if(class(sequence)!="list"){
-		sequence<-list(sequence)
-		intensity<-list(intensity)
-		probeStart<-list(probeStart)
-	}
+ProbeTrack <- function(sequence, intensity, probeStart, restab = NULL, 
+                       group = NULL, name="ProbeTrack", ...){
+  if(!is.null(restab) && class(restab) == "data.frame"){
+    if(is.null(group) || !(group %in% colnames(restab))){
+      stop("'group' has to be a valid column name in 'restab'")
+    }
+    sequence <- list(restab$names)
+    probeStart <- list(restab$start)
+    intensity <- list(restab[, group])
+  } else{
+    if(missing(probeStart)){
+      stop("Need probeStart argument to know where to plot the data on the genome")
+    }
+    if(missing(sequence)){
+      stop("Need sequence argument to know what to plot")
+    }
+    if(class(sequence)!="list"){
+		  sequence<-list(sequence)
+		  intensity<-list(intensity)
+		  probeStart<-list(probeStart)
+    }
+  }
 	##check the consistancy of number of entires 
 	if(!(identical(lapply(intensity,length),lapply(probeStart,length)) && identical(lapply(sequence,length),lapply(probeStart,length))))
-		stop("sequence ,intensity and probeStart need have identifcal structure!")
+		stop("sequence, intensity and probeStart need have identifcal structure!")
 	##check the types
 	if(any(unlist(lapply(sequence,class))!="character"))
 		stop("sequence has to be character vector!")
