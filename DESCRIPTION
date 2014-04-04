@@ -10,12 +10,13 @@ Description: Pviz adapts the Gviz package for protein information and data.
 License: Artistic-2.0
 Depends:
     R(>= 2.15.0),
-    methods,
     Gviz(>= 1.7.10)
 Imports:
     biovizBase,
     GenomicRanges,
-    IRanges
+    IRanges,
+    data.table,
+    methods
 Suggests:
     knitr,
     PEP.db

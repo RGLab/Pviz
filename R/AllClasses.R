@@ -14,7 +14,6 @@
 #' @name DTrack
 #' @aliases DTrack-class
 #' @importClassesFrom Gviz DataTrack NumericTrack RangeTrack GdObject
-#' @import methods
 #' @author Renan Sauteraud
 #' @export
 setClass("DTrack", contains = "DataTrack", representation = representation())
