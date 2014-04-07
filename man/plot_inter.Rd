@@ -3,12 +3,11 @@
 \alias{plot_inter}
 \title{Plot frequency of response for each group}
 \usage{
-plot_inter(peptideSet, calls, from = 0, to, ...)
+plot_inter(restab, from = 0, to, ...)
 }
 \arguments{
-\item{peptideSet}{A \code{peptideSet} object.}
-
-\item{calls}{A \code{matrix}, as returned by the \code{makeCalls} function.}
+\item{restab}{A \code{data.frame}. The result of a peptide microarray analysis,
+as returned by \code{pepStat}'s \code{restab} function.}
 
 \item{from}{A \code{numeric}, the start coordinate of the plot.}
 

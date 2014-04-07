@@ -3,15 +3,25 @@
 #' @import methods
 #' @import data.table
 NULL
-inter_group <- function(peptideSet, calls){
-	if(!(all(rownames(calls) == rownames(peptideSet)))){
-    stop("The call result and peptideSet have different peptides")
-  }
-  data <- data.table(calls)
-  data <- data[, position := position(peptideSet)]
-  data <- data[, lapply(.SD, mean), by = "position"]
-  data <- data[order(position)]
-  return(data)
+
+
+# inter_group <- function(peptideSet, calls){
+# 	if(!(all(rownames(calls) == rownames(peptideSet)))){
+#     stop("The call result and peptideSet have different peptides")
+#   }
+#   data <- data.table(calls)
+#   data <- data[, position := position(peptideSet)]
+#   data <- data[, lapply(.SD, mean), by = "position"]
+#   data <- data[order(position)]
+#   return(data)
+# }
+inter_group <- function(data){
+  calls <- data.table(data[, colnames(data)[!colnames(data) %in%
+                                              c("names", "space", "start", 
+                                                "end", "width", "clade")]])
+  calls <- calls[, lapply(.SD, mean), by = "position"]
+  calls <- calls[order(position)]
+  return(calls)
 }
 
 ##
@@ -20,8 +30,10 @@ inter_group <- function(peptideSet, calls){
 #' Plot an axis and the frequency of response of each group, averaged by peptides
 #' at each position.
 #' 
-#' @param peptideSet A \code{peptideSet} object.
-#' @param calls A \code{matrix}, as returned by the \code{makeCalls} function.
+# @param peptideSet A \code{peptideSet} object.
+# @param calls A \code{matrix}, as returned by the \code{makeCalls} function.
+#' @param restab A \code{data.frame}. The result of a peptide microarray analysis,
+#'   as returned by \code{pepStat}'s \code{restab} function.
 #' @param from A \code{numeric}, the start coordinate of the plot.
 #' @param to A \code{numeric}, the end coordinate of the plot.
 #' @param ... Aditional arguments to be passed to \code{plotTracks}.
@@ -37,8 +49,10 @@ inter_group <- function(peptideSet, calls){
 #' @author Renan Sauteraud
 #' @export
 #' 
-plot_inter <- function(peptideSet, calls, from=0, to, ...){
-  data <- inter_group(peptideSet, calls)
+plot_inter <- function(restab, from = 0, to, ...){
+# plot_inter <- function(peptideSet, calls, from=0, to, ...){
+#   data <- inter_group(peptideSet, calls)
+  data <- inter_group(restab)
   if(missing(to)){
     to <- max(data$position)
   } else if(to > max(data$position)){
