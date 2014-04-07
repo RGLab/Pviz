@@ -3,7 +3,7 @@
 \alias{plot_inter}
 \title{Plot frequency of response for each group}
 \usage{
-plot_inter(restab, from = 0, to, ...)
+plot_inter(restab, from = 0, to = max(restab$positiom), ...)
 }
 \arguments{
 \item{restab}{A \code{data.frame}. The result of a peptide microarray analysis,
@@ -19,17 +19,10 @@ as returned by \code{pepStat}'s \code{restab} function.}
 Plot an axis and the frequency of response of each group, averaged by peptides
 at each position.
 }
-\details{
-The peptideSet should be the one used in the function call to \code{makeCalls}
-that generated the calls used. They should have identical peptides in the same
-order.
-The function requires the calls matrix to have been created using
-\code{makeCalls} with freq set to TRUE and a grouping variable.
-}
 \author{
 Renan Sauteraud
 }
 \seealso{
-plot_clade
+\code{restab}
 }
 

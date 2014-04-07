@@ -38,31 +38,21 @@ inter_group <- function(data){
 #' @param to A \code{numeric}, the end coordinate of the plot.
 #' @param ... Aditional arguments to be passed to \code{plotTracks}.
 #' 
-#' @details 
-#' The peptideSet should be the one used in the function call to \code{makeCalls}
-#' that generated the calls used. They should have identical peptides in the same
-#' order.
-#' The function requires the calls matrix to have been created using 
-#' \code{makeCalls} with freq set to TRUE and a grouping variable.
-#' 
-#' @seealso plot_clade
+#' @seealso \code{restab}
 #' @author Renan Sauteraud
 #' @export
 #' 
-plot_inter <- function(restab, from = 0, to, ...){
-# plot_inter <- function(peptideSet, calls, from=0, to, ...){
-#   data <- inter_group(peptideSet, calls)
+plot_inter <- function(restab, from = 0, to = max(restab$positiom), ...){
   data <- inter_group(restab)
-  if(missing(to)){
-    to <- max(data$position)
-  } else if(to > max(data$position)){
-    warning(paste("'to' is bigger than the sequence length. Set to", max(data$position)))
-    to <- max(data$position)
-  }
+#   if(missing(to)){
+#     to <- max(data$position)
+#   } else if(to > max(data$position)){
+#     warning(paste("'to' is bigger than the sequence length. Set to", max(data$position)))
+#     to <- max(data$position)
+#   }
   if(from > to){
     stop(paste0("'from' (", from, ") is bigger than 'to' (", to, ")"))
   }
-  main <- 
   pat <- ProteinAxisTrack(addNC = TRUE)
   dt <- DTrack(start=data$position, end=data$position, data=data[, 2:ncol(data), with=FALSE],
                groups =  colnames(data)[2:ncol(data)], name="Freq", legend=TRUE, type="l", background.title="darkgray")
