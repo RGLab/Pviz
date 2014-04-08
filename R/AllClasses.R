@@ -121,12 +121,12 @@ setClass("ProbeTrack", contains = "GdObject",
 				intensity = list(),
 				probeStart = list(),
 				dp = DisplayPars(
-						color=rev(heat.colors(8, alpha = 1)),
-						size = 2, #it displays better when slightly bigger than annotation tracks
-						cex=1
-				)
-		)
-)
+          color=rev(heat.colors(8, alpha = 1)),
+					size = 2, #it displays better when slightly bigger than annotation tracks
+          cex=1
+          )
+        )
+    )
 
 setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, probeStart, name, ...){
 			.makeParMapping()
@@ -286,13 +286,3 @@ ProteinAxisTrack<-function(range=NULL, name="Axis", addNC=FALSE, id=NULL, ...){
 			id=GvizGAT@id,
 			addNC=addNC, ...)
 }
-
-#' Track 
-#' 
-#'
-#' 
-setClass("CladeTrack", contains = "DTrack")
-setMethod("initialize", "CladeTrack", function(.Object, ...){
-  .Object <- callNextMethod() #Call the initialize function of Pviz::DTrack
-  return(.Object)
-})
