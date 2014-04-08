@@ -29,7 +29,7 @@ NULL
 #' @author Renan Sauteraud
 #' @export
 #' 
-plot_inter <- function(restab, from = 0, to = max(restab$positiom), ...){
+plot_inter <- function(restab, from = 0, to = max(restab$position), ...){
   if(from > to){
     stop(paste0("'from' (", from, ") is bigger than 'to' (", to, ")"))
   }
