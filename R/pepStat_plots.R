@@ -101,7 +101,7 @@ CladeTrack <- function(restab, clade, ...){
   data <- restab[ restab$clade == clade, ]
   cn <- c("start", "end", "width", "position", "names", "space", "clade")
   groups <- colnames(data)[! colnames(data) %in% cn]
-  new("CladeTrack", start = restab$positio, end = restab$position,
-      data = restab, data = data[, groups], ...)
+  new("CladeTrack", start = data$position, end = data$position,
+      groups = groups, data = data[, groups], ...)
 }
 
