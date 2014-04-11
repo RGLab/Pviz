@@ -90,6 +90,12 @@ plot_clade <- function(restab, clade, from = 0, to = max(restab$position), ...){
 setClass("CladeTrack", contains = "DTrack",
          representation = representation(clade = "character"))
 
+setMethod("initialize", "CladeTrack", function(.Object, clade, ...){
+  .Object@clade <- clade
+  .Object <- callNextMethod() #Call the initialize function of Pviz::DTrack
+  return(.Object)
+})
+
 #' @rdname CladeTrack
 #' @param restab A \code{data.frame}. The result of a peptide microarray analysis,
 #'   as returned by \code{pepStat}'s \code{restab} function.
@@ -101,7 +107,11 @@ CladeTrack <- function(restab, clade, ...){
   data <- restab[ restab$clade == clade, ]
   cn <- c("start", "end", "width", "position", "names", "space", "clade")
   groups <- colnames(data)[! colnames(data) %in% cn]
-  new("CladeTrack", start = data$position, end = data$position,
-      groups = groups, data = data[, groups], ...)
+  mat <- as.matrix(data[, groups])
+  DT <- DTrack(range = NULL, start = data$position, end = data$position,
+                  groups = groups, data = t(mat), ...)
+#  new("CladeTrack", clade = clade, range = DT@range, 
+#      groups = DT@dp@pars$groups, data = DT@data,
+#      chromosome = DT@chromosome, genome = DT@genome, ...)
 }
 
