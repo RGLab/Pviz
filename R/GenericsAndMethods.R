@@ -29,10 +29,6 @@ setReplaceMethod("ProbeSequence", "ProbeTrack", function(obj, value){
 setMethod("start", "ProbeTrack", function(x) if(length(x)) as.integer(ProbeStart(x)[[1]]) else NULL)
 setMethod("end", "ProbeTrack", function(x) start(x))
 
-#HivFeature Accessors
-#setGeneric("getHivFeatureSeq", def=function(HIVF) standardGeneric("getHivFeatureSeq"))
-#setMethod("getHivFeatureSeq", def=function(HIVF) as.character(HIVF@HIV_db$hxb2AA[1,]))
-
 setGeneric("getSequenceSeq", def=function(GdObject) standardGeneric("getSequenceSeq"))
 setMethod("getSequenceSeq", def=function(GdObject) GdObject@sequence)
 

@@ -3,7 +3,7 @@
 \alias{plot_inter}
 \title{Plot frequency of response for each group}
 \usage{
-plot_inter(restab, from = 0, to = max(restab$positiom), ...)
+plot_inter(restab, from = 0, to = max(restab$position), ...)
 }
 \arguments{
 \item{restab}{A \code{data.frame}. The result of a peptide microarray analysis,

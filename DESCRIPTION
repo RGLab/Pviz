@@ -16,7 +16,8 @@ Imports:
     GenomicRanges,
     IRanges,
     data.table,
-    methods
+    methods,
+    RColorBrewer
 Suggests:
     knitr,
     PEP.db
