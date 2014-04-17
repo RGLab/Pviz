@@ -3,13 +3,19 @@
 \alias{plot_clade}
 \title{Plot frequency of response for a single clade.}
 \usage{
-plot_clade(restab, clade, from = 0, to = max(restab$position), ...)
+plot_clade(restab, clade, sequence, from = 0, to = max(restab$position),
+  ...)
 }
 \arguments{
 \item{restab}{A \code{data.frame}. The result of a peptide microarray analysis,
 as returned by \code{pepStat}'s \code{restab} function.}
 
 \item{clade}{A \code{character}. The clade to plot.}
+
+\item{sequence}{A \code{character} or an \code{AAString}. If not NULL, the
+sequence of the \code{ProteinSequenceTrack} to plot. It should be the
+sequence of the reference genome used in the \code{peptideSet} that
+generated the \code{restab}.}
 
 \item{from}{A \code{numeric}, the start coordinate of the plot.}
 

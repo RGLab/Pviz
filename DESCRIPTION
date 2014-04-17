@@ -9,7 +9,7 @@ Description: Pviz adapts the Gviz package for protein information and data.
     intensity data on desired proteins and allows their display via Gviz.
 License: Artistic-2.0
 Depends:
-    R(>= 2.15.0),
+    R(>= 3.0.0),
     Gviz(>= 1.7.10)
 Imports:
     biovizBase,

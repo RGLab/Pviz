@@ -3,11 +3,17 @@
 \alias{plot_inter}
 \title{Plot frequency of response for each group}
 \usage{
-plot_inter(restab, from = 0, to = max(restab$position), ...)
+plot_inter(restab, sequence = NULL, from = 0, to = max(restab$position),
+  ...)
 }
 \arguments{
-\item{restab}{A \code{data.frame}. The result of a peptide microarray analysis,
-as returned by \code{pepStat}'s \code{restab} function.}
+\item{restab}{A \code{data.frame}. The result of a peptide microarray
+analysis, as returned by \code{pepStat}'s \code{restab} function.}
+
+\item{sequence}{A \code{character} or an \code{AAString}. If not NULL, the
+sequence of the \code{ProteinSequenceTrack} to plot. It should be the
+sequence of the reference genome used in the \code{peptideSet} that
+generated the \code{restab}.}
 
 \item{from}{A \code{numeric}, the start coordinate of the plot.}
 

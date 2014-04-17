@@ -19,8 +19,12 @@ NULL
 #' Plot an axis and the frequency of response of each group, averaged by peptides
 #' at each position.
 #' 
-#' @param restab A \code{data.frame}. The result of a peptide microarray analysis,
-#'   as returned by \code{pepStat}'s \code{restab} function.
+#' @param restab A \code{data.frame}. The result of a peptide microarray 
+#'   analysis, as returned by \code{pepStat}'s \code{restab} function.
+#' @param sequence A \code{character} or an \code{AAString}. If not NULL, the 
+#'   sequence of the \code{ProteinSequenceTrack} to plot. It should be the 
+#'   sequence of the reference genome used in the \code{peptideSet} that 
+#'   generated the \code{restab}.
 #' @param from A \code{numeric}, the start coordinate of the plot.
 #' @param to A \code{numeric}, the end coordinate of the plot.
 #' @param ... Aditional arguments to be passed to \code{plotTracks}.
@@ -30,23 +34,27 @@ NULL
 #' @importFrom RColorBrewer brewer.pal
 #' @export
 #' 
-plot_inter <- function(restab, from = 0, to = max(restab$position), ...){
-  annotations <- data.frame(start = c(131L, 157L, 296L, 385L, 459L, 661L, 683L),
-                            end = c(156L, 195L, 330L, 417L, 469L, 682L, 705L),
-                            width = c(26L, 39L, 35L, 33L, 11L, 22L, 23L),
-                            feature = c("V1", "V2", "V3", "V4", "V5", "MPER", "TM"))
+plot_inter <- function(restab, sequence = NULL, from = 0, to = max(restab$position), ...){
   if(from > to){
     stop(paste0("'from' (", from, ") is bigger than 'to' (", to, ")"))
   }
   data <- .inter_group(restab)
-  pat <- ProteinAxisTrack(addNC = TRUE)
-  at <- ATrack(start = annotations$start, end = annotations$end, id = annotations$feature,
+  tracks <- ProteinAxisTrack(addNC = TRUE)
+  if(!is.null(sequence)){
+    tracks <- c(tracks, ProteinSequenceTrack(sequence, name = "", 
+                                             background.title = "transparent"))
+  }
+  annotations <- data.frame(start = c(131L, 157L, 296L, 385L, 459L, 661L, 683L),
+                            end = c(156L, 195L, 330L, 417L, 469L, 682L, 705L),
+                            width = c(26L, 39L, 35L, 33L, 11L, 22L, 23L),
+                            feature = c("V1", "V2", "V3", "V4", "V5", "MPER", "TM"))
+  tracks <- c(tracks, ATrack(start = annotations$start, end = annotations$end, id = annotations$feature,
                fill=brewer.pal(n=nrow(annotations), "Paired"), fontcolor.feature = "black",
-               background.title="darkgray", name = "Features")
-  dt <- DTrack(start=data$position, end=data$position, data=data[, 2:ncol(data), with=FALSE],
+               background.title="darkgray", name = "Features"))
+  tracks <- c(tracks, DTrack(start=data$position, end=data$position, data=data[, 2:ncol(data), with=FALSE],
                groups =  colnames(data)[2:ncol(data)], name="Freq", legend=TRUE, type="l", 
-               background.title="darkgray")
-  plotTracks(c(pat, at, dt), from = from, to = to, showFeatureId = TRUE, ...)
+               background.title="darkgray"))
+  plotTracks(tracks, from = from, to = to, showFeatureId = TRUE, ...)
 }
 
 #' Plot frequency of response for a single clade.
@@ -56,6 +64,10 @@ plot_inter <- function(restab, from = 0, to = max(restab$position), ...){
 #' @param restab A \code{data.frame}. The result of a peptide microarray analysis,
 #'   as returned by \code{pepStat}'s \code{restab} function.
 #' @param clade A \code{character}. The clade to plot.
+#' @param sequence A \code{character} or an \code{AAString}. If not NULL, the 
+#'   sequence of the \code{ProteinSequenceTrack} to plot. It should be the 
+#'   sequence of the reference genome used in the \code{peptideSet} that 
+#'   generated the \code{restab}.
 #' @param from A \code{numeric}, the start coordinate of the plot.
 #' @param to A \code{numeric}, the end coordinate of the plot.
 #' @param ... Aditional arguments to be passed to \code{plotTracks}.
@@ -63,7 +75,7 @@ plot_inter <- function(restab, from = 0, to = max(restab$position), ...){
 #' @seealso \code{restab}, \code{plot_inter}, \code{\link{plotTracks}}
 #' @author Renan Sauteraud
 #' @export
-plot_clade <- function(restab, clade, from = 0, to = max(restab$position), ...){
+plot_clade <- function(restab, clade, sequence, from = 0, to = max(restab$position), ...){
   if(from > to){
     stop(paste0("'from' (", from, ") is bigger than 'to' (", to, ")"))
   }
@@ -77,15 +89,18 @@ plot_clade <- function(restab, clade, from = 0, to = max(restab$position), ...){
     stop(paste("All clades must be available in the result table.
          Clade(s)", paste(clade[!clade %in% uclade], collapse = ","), "invalid."))
   }
-  pat <- ProteinAxisTrack(addNC = TRUE)
+  tracks <- ProteinAxisTrack(addNC = TRUE)
+  if(!is.null(sequence)){
+    tracks <- c(tracks, ProteinSequenceTrack(sequence, name = "", 
+                                             background.title = "transparent"))
+  }
   annotations <- data.frame(start = c(131L, 157L, 296L, 385L, 459L, 661L, 683L),
                             end = c(156L, 195L, 330L, 417L, 469L, 682L, 705L),
                             width = c(26L, 39L, 35L, 33L, 11L, 22L, 23L),
                             feature = c("V1", "V2", "V3", "V4", "V5", "MPER", "TM"))
-  at <- ATrack(start = annotations$start, end = annotations$end, id = annotations$feature,
+  tracks <- c(tracks, ATrack(start = annotations$start, end = annotations$end, id = annotations$feature,
                fill=brewer.pal(n=nrow(annotations), "Paired"), fontcolor.feature = "black",
-               background.title="darkgray", name = "Features")
-  tracks <- c(pat, at)
+               background.title="darkgray", name = "Features"))
   #Clades
   cn <- c("start", "end", "width", "position", "peptide", "space", "clade")
   for(cur_clade in clade){
