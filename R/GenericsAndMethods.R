@@ -1,5 +1,19 @@
 #Generics & Method
 
+#show methods
+setMethod("show", "DTrack", def = function(object){
+  msg <- sprintf(paste("DTrack '%s'\n| positions: %s\n| samples:%s", sep = ""), 
+                 names(object), length(object), 
+                 nrow(values(object)))
+  cat(paste(msg, collapse = "\n"), "\n")
+})
+setMethod("show", "CladeTrack", def = function(object){
+  msg <- sprintf(paste("CladeTrack '%s'\n| clade: %s\n| positions: %s\n| samples:%s", sep = ""), 
+                 names(object), object@clade, length(object), 
+                 nrow(values(object)))
+  cat(paste(msg, collapse = "\n"), "\n")
+})
+
 #ProbeTrack Accessors
 setGeneric("ProbeStart",def=function(obj,...) standardGeneric("ProbeStart"))
 setGeneric("ProbeIntensity",def=function(obj,...) standardGeneric("ProbeIntensity"))
@@ -195,7 +209,8 @@ setMethod("drawGD", signature("ProbeTrack"), function(GdObject, minBase, maxBase
     nSeq<-width/15
     
     #group the 15mers by positions
-    probeArray$posInterval <- cut(probeArray$probeStart,seq(minBase,maxBase,20),right=F,include.lowest=T)
+    probeArray$posInterval <- cut(probeArray$probeStart,seq(minBase,maxBase,20),
+                                  right=FALSE, include.lowest=TRUE)
     
     #decide the maximum tiers where sequences to be displayed
     nRows<-max(table(probeArray$posInterval))
@@ -203,12 +218,13 @@ setMethod("drawGD", signature("ProbeTrack"), function(GdObject, minBase, maxBase
     pushViewport(dataViewport(xData=c(minBase, maxBase), yscale=c(0, nRows+1), extension = 0,
     				layout.pos.col = 1, layout.pos.row = curR))
     
-    showSeq<-ifelse(width<=200,T,F)
+    showSeq<-ifelse(width<=200, TRUE, FALSE)
     
     ##include the range value for cutting function
     intVec<-c(probeArray$intensity,range.legend)
     #get color by intensity
-    probeArray$intensityInterval <- cut(intVec,breaks=length(color),right=F,include.lowest=T)[1:nrow(probeArray)]
+    probeArray$intensityInterval <- cut(intVec, breaks=length(color), 
+                                        right=FALSE, include.lowest=TRUE)[1:nrow(probeArray)]
     
     idCex<-getPar(GdObject,"cex")
     seqCex<-idCex*5/nSeq

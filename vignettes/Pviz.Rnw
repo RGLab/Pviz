@@ -10,7 +10,7 @@
 
 <<include=FALSE>>=
 library(knitr)
-opts_chunk$set(tidy=TRUE)
+opts_chunk$set(tidy=FALSE)
 @
 
 
@@ -22,7 +22,6 @@ opts_chunk$set(tidy=TRUE)
 
 \tableofcontents
 
-%\newpage
 
 \section{Introduction}
 \texttt{Pviz} is an R package inspired by and depending on \texttt{Gviz}. It
@@ -53,7 +52,8 @@ However, it does not require to specify a chromosome and a genome. Please refer
 to \texttt{Gviz} documentation for more details about \texttt{AnnotationTrack}
 and the available \texttt{DisplayParameters}.
 <<ATrack-example, fig.height=1.5>>=
-at<-ATrack(start=c(250,480), end=c(320,520), name="Annotations")
+at<-ATrack(start = c(250,480), end = c(320,520), id = c("Anno1","Anno2"),
+           showFeatureId = TRUE, fontcolor = "black", name = "Annotations")
 plotTracks(at, from=1, to=600)
 @
 
@@ -62,12 +62,13 @@ Naturally \texttt{DTrack} extends Gviz's \texttt{DataTrack}. Here again, please
 refer to \texttt{Gviz} documentation for details on how to use
 \texttt{DataTrack}.
 
-Some example data are available in the data package PEP.db. Expression frequency
-for peptide in hxb2 envelope.
+Some example data are available in the data package \texttt{PEP.db}. Frequency
+of antibody binding event in hxb2 enveloppe peptides.
 <<DTrack-example, fig.height=4>>=
 library(PEP.db)
-data(PvizVignette)
-dt<-DTrack(data=freqEx, start=startEx, width=15, name="Freq")
+data(restab_aggregate)
+dt <- DTrack(data = restab_aggregate$group2, start = restab_aggregate$start, 
+             width=15, name="Freq", type = "l")
 plotTracks(dt, from=1, to=850, type="l")
 @
 
@@ -90,7 +91,7 @@ plotTracks(pat, from=1, to=850)
 
 Just like in \texttt{GenomeAxisTrack}, it is possible to use littleTicks to get
 a more precise scale. Moreover, because \texttt{Pviz}, has been made to deal
-with peptides and protein, the option addNc can display indicators for N-term
+with peptides and protein, the option addNC can display indicators for N-term
 and C-term ends on the axis.
 
 <<ProteinAxisTrack-options, fig.height=1.1>>=
@@ -107,17 +108,15 @@ position of any other element you choose to display at the same time.
 
 The previously loaded dataset also contains the sequence of the envelope of 
 hxb2 to be used as an example.
+The peptide collections in \texttt{PEP.db} contain reference sequence as 
+metadata. Here hxb2 sequence is displayed.
 <<ProteinSequenceTrack-basic, fig.height=1.5>>=
+data(pep_hxb2)
+hxb2_seq <- metadata(pep_hxb2)$sequence
 st<-ProteinSequenceTrack(sequence=hxb2_seq, name="env")
 plotTracks(trackList=c(pat,st), from=1, to=40)
 @
 
-%Note that if the plotting ranges becomes too wide, the letters will stack and it
-%may lead to an unreadable output. The default parameters usually allows to plot
-%up to 100-150 characters depending on your graphic window. The user can modify
-%the character size via the DisplayParameters system when creating the track
-%with the cex argument.
-%Here is an example of bad plotting.
 The sequence track for proteins handles overplotting the same way it does it for nucleotides.
 If the plotting range becomes wider, only the color code will be displayed. Once it becomes too big to even show these colors, a straight line will be displaed. Naturally, the character size will also influence what can be displayed in the graphic window.
 
@@ -139,9 +138,12 @@ plotting.
 
 To create this track, the sequence of the peptides, their intensity or
 frequency and their starting position have to be passed as arguments. All three
-arguments should be of the same length.
+arguments should be of the same length. Here, the result of a peptide microarray
+analysis is used. This time with clade specific calls.
 <<ProbeTrack-basic, fig.width=9, fig.height=4.5>>=
-pt<-ProbeTrack(pepEx, freqEx, startEx) 
+data(restab)
+pt<-ProbeTrack(sequence = restab$peptide, intensity = restab$group2, 
+               probeStart = restab$start) 
 plotTracks(pt, from=460, to=560)
 @
 
@@ -166,9 +168,12 @@ is the display of multiple tracks at once.
 Here is an example of what \texttt{Pviz} can render, using the tracks previously
 created.
 <<complex-plot, fig.width=9, fig.height=6>>=
-pt<-ProbeTrack(pepEx, freqEx, startEx, cex=0.2)
+pt<-ProbeTrack(sequence = restab$peptide, intensity = restab$group2, 
+               probeStart = restab$start, cex=0.2)
 plotTracks(trackList=c(pat, st, at, pt, dt), from=460, to=560, type="l", legend=TRUE)
 @
+
+
 
 \newpage
 \section{sessionInfo}

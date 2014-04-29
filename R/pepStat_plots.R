@@ -1,6 +1,7 @@
 # data.table data.table ':=' '.SD'
 
 #' @import methods
+#' @import Gviz
 #' @import data.table
 NULL
 
@@ -29,6 +30,11 @@ NULL
 #' @param to A \code{numeric}, the end coordinate of the plot.
 #' @param ... Aditional arguments to be passed to \code{plotTracks}.
 #' 
+#' @examples
+#' library(PEP.db)
+#' data(restab_aggregate)
+#' plot_inter(restab_aggregate)
+#' 
 #' @seealso \code{restab}, \code{plot_clade}, \code{\link{plotTracks}}
 #' @author Renan Sauteraud
 #' @export
@@ -49,7 +55,7 @@ plot_inter <- function(restab, sequence = NULL, from = 0, to = max(restab$positi
                             feature = c("V1", "V2", "V3", "V4", "V5", "MPER", "TM"))
   tracks <- c(tracks, ATrack(start = annotations$start, end = annotations$end, 
                id = annotations$feature, fontcolor.feature = "black",
-               fill = rep(c("darkgray", "lightgray"), length.out=nrow(annotations)),
+               fill = rep_len(c("darkgray", "lightgray"), length.out=nrow(annotations)),
                background.title="darkgray", 
                name = "Features", rotation.item = 45))
   tracks <- c(tracks, DTrack(start=data$position, end=data$position, data=data[, 2:ncol(data), with=FALSE],
@@ -72,6 +78,11 @@ plot_inter <- function(restab, sequence = NULL, from = 0, to = max(restab$positi
 #' @param from A \code{numeric}, the start coordinate of the plot.
 #' @param to A \code{numeric}, the end coordinate of the plot.
 #' @param ... Aditional arguments to be passed to \code{plotTracks}.
+#' 
+#' @examples
+#' library(PEP.db)
+#' data(restab)
+#' plot_clade(restab, clade = c("A", "M"))
 #' 
 #' @seealso \code{restab}, \code{plot_inter}, \code{\link{plotTracks}}
 #' @author Renan Sauteraud
@@ -101,7 +112,7 @@ plot_clade <- function(restab, clade, sequence = NULL, from = 0, to = max(restab
                             feature = c("V1", "V2", "V3", "V4", "V5", "MPER", "TM"))
   tracks <- c(tracks, ATrack(start = annotations$start, end = annotations$end, 
                       id = annotations$feature, fontcolor.feature = "black",
-                      fill = rep(c("darkgray", "lightgray"), length.out=nrow(annotations)),
+                      fill = rep_len(c("darkgray", "lightgray"), length.out=nrow(annotations)),
                       background.title="darkgray", name = "Features",  rotation.item = 45))
   #Clades
   cn <- c("start", "end", "width", "position", "peptide", "space", "clade")
@@ -147,17 +158,27 @@ setMethod("initialize", "CladeTrack", function(.Object, clade, ...){
 #' @param restab A \code{data.frame}. The result of a peptide microarray analysis,
 #'   as returned by \code{pepStat}'s \code{restab} function.
 #' @param clade A \code{character}. The clade to plot.
+#' @param name A \code{character}. The name of the track, used in the title 
+#'   panel when plotting. By default, the \code{clade} name.
 #' @param ... Additional argument to be passed to \code{DataTrack}. They will be
 #'   treated as display parameters.
+#' 
+#' @examples
+#' library(PEP.db)
+#' data(restab)
+#' ct <- CladeTrack(restab, clade = "M", type = "l", legend = TRUE)  
+#' plotTracks(ct)
+#' 
 #' @export
-CladeTrack <- function(restab, clade, ...){
+CladeTrack <- function(restab, clade, name=clade, ...){
   data <- restab[ restab$clade == clade, ]
-  cn <- c("start", "end", "width", "position", "names", "space", "clade")
+  cn <- c("peptide", "start", "end", "width", "position", "names", "space", "clade")
   groups <- colnames(data)[! colnames(data) %in% cn]
   mat <- as.matrix(data[, groups])
   DT <- DTrack(range = NULL, start = data$position, end = data$position,
-                  groups = groups, data = t(mat), ...)
-#  new("CladeTrack", clade = clade, range = DT@range, 
-#      groups = DT@dp@pars$groups, data = DT@data,
-#      chromosome = DT@chromosome, genome = DT@genome, ...)
+                  groups = groups, data = t(mat), name = name, ...)
+  new("CladeTrack", clade = clade, range = DT@range, 
+      groups = DT@dp@pars$groups, data = DT@data,
+      chromosome = DT@chromosome, genome = DT@genome, 
+      name = DT@name, ...)
 }

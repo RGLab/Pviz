@@ -20,5 +20,5 @@ Imports:
 Suggests:
     knitr,
     PEP.db
-biocViews: Microarray, Visualisation
+biocViews: Visualization, Proteomics, Microarray
 VignetteBuilder: knitr

@@ -5,7 +5,7 @@
 \alias{CladeTrack-class}
 \title{CladeTrack}
 \usage{
-CladeTrack(restab, clade, ...)
+CladeTrack(restab, clade, name = clade, ...)
 }
 \arguments{
 \item{restab}{A \code{data.frame}. The result of a peptide microarray analysis,
@@ -13,8 +13,11 @@ as returned by \code{pepStat}'s \code{restab} function.}
 
 \item{clade}{A \code{character}. The clade to plot.}
 
+\item{name}{A \code{character}. The name of the track, used in the title
+panel when plotting. By default, the \code{clade} name.}
+
 \item{...}{Additional argument to be passed to \code{DataTrack}. They will be
-treated as display parameters.}
+  treated as display parameters.}
 }
 \description{
 This track can be used to display the result of pepStat analysis for a single
@@ -25,6 +28,12 @@ clade. It contains \code{DTrack}.
 \describe{
 \item{\code{clade}}{A \code{character}. The clade to display.}
 }}
+\examples{
+library(PEP.db)
+data(restab)
+ct <- CladeTrack(restab, clade = "M", type = "l", legend = TRUE)
+plotTracks(ct)
+}
 \author{
 Renan Sauteraud
 }
