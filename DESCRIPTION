@@ -2,11 +2,9 @@ Package: Pviz
 Type: Package
 Title: Peptide Annotation and Data Visualization using Gviz
 Version: 0.99.0
-Author: Mike Jiang, Raphael Gottardo
+Author: Renan Sauteraud, Mike Jiang, Raphael Gottardo
 Maintainer: Renan Sauteraud <rsautera@fhcrc.org>
-Description: Pviz adapts the Gviz package for protein information and data.
-    Uses the PEP.db, HIV.db and pepStat packages to obtain annotation and
-    intensity data on desired proteins and allows their display via Gviz.
+Description: Pviz adapts the Gviz package for protein sequences and data.
 License: Artistic-2.0
 Depends:
     R(>= 3.0.0),

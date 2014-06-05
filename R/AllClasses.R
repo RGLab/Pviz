@@ -109,6 +109,16 @@ ATrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, group,
 #' 
 #' @inheritParams DTrack
 #' 
+#' @examples
+#' if(require(PEP.db)){
+#'   data(restab)
+#'   pt <- ProbeTrack(sequence = restab$peptide,
+#'                    intensity = restab$group2,
+#'                    probeStart = restab$start)
+#'   plotTracks(pt)
+#'   plotTracks(pt, from = 460, to = 560, legend=TRUE)
+#' }
+#' 
 #' @name ProbeTrack
 #' @aliases ProbeTrack-class
 #' @author Renan Sauteraud
@@ -209,7 +219,7 @@ ProbeTrack <- function(sequence, intensity, probeStart, restab = NULL,
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges IRanges
 #' @importFrom IRanges IRanges
-#' @importFrom biovizBase getBioColor
+#' @importFrom biovizBase getBioColor AA_ALPHABET
 #' @importClassesFrom Gviz GdObject
 #' @export
 #' 
@@ -227,6 +237,23 @@ setClass("ProteinSequenceTrack",
 #'   when plotting
 #' @param ... Additional items which will all be interpreted as display 
 #'   parameters.
+#'   
+#' @examples
+#' if(require(PEP.db)){
+#'   data(pep_hxb2)
+#'   hxb2_seq <- metadata(pep_hxb2)$sequence
+#'   st<-ProteinSequenceTrack(sequence=hxb2_seq, name="env")
+#' 
+#'   # Plotting amino acids
+#'   plotTracks(st, to = 20)
+#' 
+#'   # When the range becomes wider, only coloured squares are displayed
+#'   plotTracks(st, to = 100)
+#' 
+#'   # When overplotting, a single line will mark the ProteinSequenceTrack
+#'   plotTracks(st)
+#' }
+#' 
 #' @export
 ProteinSequenceTrack <- function(sequence=NULL, name = "Sequence", ...){
   if(is.null(sequence)){

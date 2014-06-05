@@ -15,10 +15,26 @@ sequence to display.}
 when plotting}
 
 \item{...}{Additional items which will all be interpreted as display
-parameters.}
+  parameters.}
 }
 \description{
 A track to display peptides and protein sequences.
+}
+\examples{
+if(require(PEP.db)){
+  data(pep_hxb2)
+  hxb2_seq <- metadata(pep_hxb2)$sequence
+  st<-ProteinSequenceTrack(sequence=hxb2_seq, name="env")
+
+  # Plotting amino acids
+  plotTracks(st, to = 20)
+
+  # When the range becomes wider, only coloured squares are displayed
+  plotTracks(st, to = 100)
+
+  # When overplotting, a single line will mark the ProteinSequenceTrack
+  plotTracks(st)
+}
 }
 \author{
 Renan Sauteraud

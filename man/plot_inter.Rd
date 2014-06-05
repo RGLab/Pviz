@@ -26,9 +26,10 @@ Plot an axis and the frequency of response of each group, averaged by peptides
 at each position.
 }
 \examples{
-library(PEP.db)
-data(restab_aggregate)
-plot_inter(restab_aggregate)
+if(require(PEP.db)){
+  data(restab_aggregate)
+  plot_inter(restab_aggregate)
+}
 }
 \author{
 Renan Sauteraud

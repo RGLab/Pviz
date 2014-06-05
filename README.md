@@ -3,12 +3,8 @@ Pviz
 
 Peptide and protein visualization
 
+    vignette("Pviz")
+
 TODO:
 -----
-Examples in:
-- ProbeTrack
-- ProteinSequenceTrack (Letters, squares, line)
-Add tracks in vignette:
-- CladeTrack
-- plot\_inter
-- plot\_clade
+- Use Biostrings::AA_ALPHABET

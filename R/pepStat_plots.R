@@ -1,7 +1,4 @@
-# data.table data.table ':=' '.SD'
-
 #' @import methods
-#' @import Gviz
 #' @import data.table
 NULL
 
@@ -31,9 +28,10 @@ NULL
 #' @param ... Aditional arguments to be passed to \code{plotTracks}.
 #' 
 #' @examples
-#' library(PEP.db)
-#' data(restab_aggregate)
-#' plot_inter(restab_aggregate)
+#' if(require(PEP.db)){
+#'   data(restab_aggregate)
+#'   plot_inter(restab_aggregate)
+#' }
 #' 
 #' @seealso \code{restab}, \code{plot_clade}, \code{\link{plotTracks}}
 #' @author Renan Sauteraud
@@ -80,9 +78,10 @@ plot_inter <- function(restab, sequence = NULL, from = 0, to = max(restab$positi
 #' @param ... Aditional arguments to be passed to \code{plotTracks}.
 #' 
 #' @examples
-#' library(PEP.db)
-#' data(restab)
-#' plot_clade(restab, clade = c("A", "M"))
+#' if(require(PEP.db)){
+#'   data(restab)
+#'   plot_clade(restab, clade = c("A", "M"))
+#' }
 #' 
 #' @seealso \code{restab}, \code{plot_inter}, \code{\link{plotTracks}}
 #' @author Renan Sauteraud
@@ -164,13 +163,15 @@ setMethod("initialize", "CladeTrack", function(.Object, clade, ...){
 #'   treated as display parameters.
 #' 
 #' @examples
-#' library(PEP.db)
-#' data(restab)
-#' ct <- CladeTrack(restab, clade = "M", type = "l", legend = TRUE)  
-#' plotTracks(ct)
+#' if(require(PEP.db)){
+#'   data(restab)
+#'   ct <- CladeTrack(restab, clade = "M", type = "l", legend = TRUE)  
+#'   plotTracks(ct)
+#' }
+
 #' 
 #' @export
-CladeTrack <- function(restab, clade, name=clade, ...){
+CladeTrack <- function(restab, clade, name = clade, ...){
   data <- restab[ restab$clade == clade, ]
   cn <- c("peptide", "start", "end", "width", "position", "names", "space", "clade")
   groups <- colnames(data)[! colnames(data) %in% cn]

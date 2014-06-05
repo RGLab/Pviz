@@ -29,10 +29,11 @@ clade. It contains \code{DTrack}.
 \item{\code{clade}}{A \code{character}. The clade to display.}
 }}
 \examples{
-library(PEP.db)
-data(restab)
-ct <- CladeTrack(restab, clade = "M", type = "l", legend = TRUE)
-plotTracks(ct)
+if(require(PEP.db)){
+  data(restab)
+  ct <- CladeTrack(restab, clade = "M", type = "l", legend = TRUE)
+  plotTracks(ct)
+}
 }
 \author{
 Renan Sauteraud

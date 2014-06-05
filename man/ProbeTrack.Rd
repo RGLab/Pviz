@@ -51,6 +51,16 @@ specified. \code{group} must be a valid column name in \code{restab},
 \item{\code{intensity}}{A \code{numeric} vector. The frequency of response of each probe.
  Or the baseline corrected intensity of the signal.}
 }}
+\examples{
+if(require(PEP.db)){
+  data(restab)
+  pt <- ProbeTrack(sequence = restab$peptide,
+                   intensity = restab$group2,
+                   probeStart = restab$start)
+  plotTracks(pt)
+  plotTracks(pt, from = 460, to = 560, legend=TRUE)
+}
+}
 \author{
 Renan Sauteraud
 }
