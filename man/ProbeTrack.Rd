@@ -52,7 +52,7 @@ specified. \code{group} must be a valid column name in \code{restab},
  Or the baseline corrected intensity of the signal.}
 }}
 \examples{
-if(require(PEP.db)){
+if(require(pepDat)){
   data(restab)
   pt <- ProbeTrack(sequence = restab$peptide,
                    intensity = restab$group2,

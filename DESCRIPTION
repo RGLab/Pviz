@@ -11,12 +11,13 @@ Depends:
     Gviz(>= 1.7.10)
 Imports:
     biovizBase,
+    Biostrings,
     GenomicRanges,
     IRanges,
     data.table,
     methods
 Suggests:
     knitr,
-    PEP.db
+    pepDat
 biocViews: Visualization, Proteomics, Microarray
 VignetteBuilder: knitr

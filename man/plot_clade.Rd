@@ -27,7 +27,7 @@ generated the \code{restab}.}
 Plot an axis and the frequency of response of a single selected clade.
 }
 \examples{
-if(require(PEP.db)){
+if(require(pepDat)){
   data(restab)
   plot_clade(restab, clade = c("A", "M"))
 }

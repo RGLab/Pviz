@@ -21,7 +21,7 @@ when plotting}
 A track to display peptides and protein sequences.
 }
 \examples{
-if(require(PEP.db)){
+if(require(pepDat)){
   data(pep_hxb2)
   hxb2_seq <- metadata(pep_hxb2)$sequence
   st<-ProteinSequenceTrack(sequence=hxb2_seq, name="env")

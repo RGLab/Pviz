@@ -6,7 +6,7 @@
 #' Refer to \code{DataTrack} for details regarding the constructor.
 #'
 #' @seealso \code{\link{DataTrack}}, \code{\link{GdObject}}
-#' 
+#'
 #' @examples
 #' dTrack <- DTrack(start=seq(1,1000, len=100), width=10, data=matrix(runif(400),
 #'  nrow=4), name="random data")
@@ -24,21 +24,21 @@ setMethod("initialize", "DTrack", function(.Object, ...){
 })
 
 #' @rdname DTrack
-#' @param range,start,end,width,data,name,... Arguments to be passed to 
+#' @param range,start,end,width,data,name,... Arguments to be passed to
 #'   \code{DataTrack}.
 #' @export
-DTrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, data, 
+DTrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, data,
                    name="DTrack", ...){
 	GvizDataTrack<-DataTrack(range=range, start=start, end=end, width=width,
 			name=name, chromosome="chr0", strand="*",  genome="all",
 			data=data, ...)
 	#Create DTrack object using the slots of the DataTrack
-	new("DTrack", range=GvizDataTrack@range, 
-			data=GvizDataTrack@data, 
-			chromosome=GvizDataTrack@chromosome, 
+	new("DTrack", range=GvizDataTrack@range,
+			data=GvizDataTrack@data,
+			chromosome=GvizDataTrack@chromosome,
 			genome=GvizDataTrack@genome,
-			strand=GvizDataTrack@strand, 
-			name=GvizDataTrack@name, 
+			strand=GvizDataTrack@strand,
+			name=GvizDataTrack@name,
 			...)
 }
 
@@ -52,12 +52,12 @@ DTrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, data,
 #'
 #' @examples
 #' # Object construction
-#' aTrack <- ATrack(start = c(20, 60), end = c(40, 100), name = "random.anno", 
+#' aTrack <- ATrack(start = c(20, 60), end = c(40, 100), name = "random.anno",
 #' id=c("small","big"))
 #' #Stacking example
 #' a2Track <- ATrack(start = c(20, 30), end = c(40, 100), name = "stacking=dense",
 #' id = c("small", "big"), stacking = "dense", fill=c("black", "orange"))
-#' a3Track <- ATrack(start = c(20, 30), end = c(40, 100), name = "no stacking", 
+#' a3Track <- ATrack(start = c(20, 30), end = c(40, 100), name = "no stacking",
 #' id = c("small", "big"), fill = c("black", "orange"))
 #' #Plotting
 #' plotTracks(trackList = c(aTrack, a2Track, a3Track), showFeatureId = TRUE)
@@ -76,14 +76,14 @@ setMethod("initialize", "ATrack", function(.Object, ...){
 		})
 
 #' @rdname ATrack
-#' @param range,start,end,width,group,id,stacking,name,fun,selectFun,... 
+#' @param range,start,end,width,group,id,stacking,name,fun,selectFun,...
 #'   Arguments to be passed to \code{AnnotationTrack}.
 #' @export
 ATrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, group,
 		id, stacking="squish", name="ATrack", fun, selectFun, ...){
 	#Create an AnnotationTrack object
 	GvizAnnotationTrack<-AnnotationTrack(range=range, start=start, end=end, width=width,
-			id=id, name=name, chromosome="chr0", genome="all", stacking=stacking, 
+			id=id, name=name, chromosome="chr0", genome="all", stacking=stacking,
 			fun=fun, selectFun=selectFun, ...)
 	#Create ATrack using the AnnotationTrack
 	new("ATrack", range=GvizAnnotationTrack@range,
@@ -96,21 +96,21 @@ ATrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, group,
 
 
 #' ProbeTrack
-#' 
-#' This track can be used to display the frequency of antibody binding for each 
+#'
+#' This track can be used to display the frequency of antibody binding for each
 #' probe on an arrayas predicted by \code{pepStat}'s function \code{makeCalls}.
-#' 
+#'
 #' @slot sequence A \code{character} vector. The probes sequence.
 #' @slot probeStart A \code{numeric} vector. The start position of the probes.
 #' @slot intensity A \code{numeric} vector. The frequency of response of each probe.
 #'  Or the baseline corrected intensity of the signal.
-#' 
+#'
 #' @seealso \code{\link{GdObject}}
-#' 
+#'
 #' @inheritParams DTrack
-#' 
+#'
 #' @examples
-#' if(require(PEP.db)){
+#' if(require(pepDat)){
 #'   data(restab)
 #'   pt <- ProbeTrack(sequence = restab$peptide,
 #'                    intensity = restab$group2,
@@ -118,13 +118,13 @@ ATrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, group,
 #'   plotTracks(pt)
 #'   plotTracks(pt, from = 460, to = 560, legend=TRUE)
 #' }
-#' 
+#'
 #' @name ProbeTrack
 #' @aliases ProbeTrack-class
 #' @author Renan Sauteraud
 #' @importClassesFrom Gviz GdObject
 #' @export
-setClass("ProbeTrack", contains = "GdObject", 
+setClass("ProbeTrack", contains = "GdObject",
 		representation(sequence="list", intensity = "list",	probeStart = "list"),
 		prototype(
 				sequence=list(),
@@ -149,9 +149,9 @@ setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, pro
       })
 
 #' @rdname ProbeTrack
-#' @param sequence A \code{character} vector. The sequence of peptides to 
+#' @param sequence A \code{character} vector. The sequence of peptides to
 #'   display.
-#' @param intensity A \code{numeric} vector. The frequency of binding or the 
+#' @param intensity A \code{numeric} vector. The frequency of binding or the
 #'   baseline corrected intensity for the peptides.
 #' @param probeStart A \code{numeric} vector. The start position of the peptides.
 #' @param name A \code{character}. The name of the track used in the title panel
@@ -159,20 +159,20 @@ setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, pro
 #' @param restab A \code{data.frame} containing all the above parameters, as
 #'   outputted by \code{pepStat}'s \code{restab} function.
 #' @param group A \code{character}. The group to display on the \code{ProbeTrak}.
-#'   This is only required when \code{restab} is not NULL. See details section 
+#'   This is only required when \code{restab} is not NULL. See details section
 #'   for more information.
-#' 
+#'
 #' @details
-#' The vectors for the arguments \code{sequence}, \code{freq} and 
+#' The vectors for the arguments \code{sequence}, \code{freq} and
 #' \code{probeStart} should be of the same length. If \code{restab} is provided,
-#' the three previous arguments will be ignored and \code{group} must be 
-#' specified. \code{group} must be a valid column name in \code{restab}, 
+#' the three previous arguments will be ignored and \code{group} must be
+#' specified. \code{group} must be a valid column name in \code{restab},
 #' \code{data.frame}.
-#' 
+#'
 #' @seealso \code{restab}
-#' 
+#'
 #' @export
-ProbeTrack <- function(sequence, intensity, probeStart, restab = NULL, 
+ProbeTrack <- function(sequence, intensity, probeStart, restab = NULL,
                        group = NULL, name="ProbeTrack", ...){
   if(!is.null(restab) && class(restab) == "data.frame"){
     if(is.null(group) || !(group %in% colnames(restab))){
@@ -194,7 +194,7 @@ ProbeTrack <- function(sequence, intensity, probeStart, restab = NULL,
 		  probeStart<-list(probeStart)
     }
   }
-	##check the consistancy of number of entires 
+	##check the consistancy of number of entires
 	if(!(identical(lapply(intensity,length),lapply(probeStart,length)) && identical(lapply(sequence,length),lapply(probeStart,length))))
 		stop("sequence, intensity and probeStart need have identifcal structure!")
 	##check the types
@@ -207,22 +207,23 @@ ProbeTrack <- function(sequence, intensity, probeStart, restab = NULL,
 
 
 #' ProteinSequenceTrack
-#' 
+#'
 #' A track to display peptides and protein sequences.
-#' 
+#'
 #' @seealso \code{\link{SequenceTrack}}, \code{\link{DisplayPars}}
-#' 
+#'
 #' @author Renan Sauteraud
-#' 
+#'
 #' @name ProteinSequenceTrack
 #' @aliases ProteinSequenceTrack-class
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges IRanges
 #' @importFrom IRanges IRanges
-#' @importFrom biovizBase getBioColor AA_ALPHABET
+#' @importFrom biovizBase getBioColor
+#' @importFrom Biostrings AA_ALPHABET
 #' @importClassesFrom Gviz GdObject
 #' @export
-#' 
+#'
 setClass("ProteinSequenceTrack",
 		contains = "GdObject",
 		representation = representation(sequence = "character",
@@ -231,29 +232,29 @@ setClass("ProteinSequenceTrack",
 )
 
 #' @rdname ProteinSequenceTrack
-#' @param sequence A \code{character} or \code{AAString} of length one. The 
+#' @param sequence A \code{character} or \code{AAString} of length one. The
 #'   sequence to display.
 #' @param name A \code{character}. The name of the track used in the title panel
 #'   when plotting
-#' @param ... Additional items which will all be interpreted as display 
+#' @param ... Additional items which will all be interpreted as display
 #'   parameters.
-#'   
+#'
 #' @examples
-#' if(require(PEP.db)){
+#' if(require(pepDat)){
 #'   data(pep_hxb2)
 #'   hxb2_seq <- metadata(pep_hxb2)$sequence
 #'   st<-ProteinSequenceTrack(sequence=hxb2_seq, name="env")
-#' 
+#'
 #'   # Plotting amino acids
 #'   plotTracks(st, to = 20)
-#' 
+#'
 #'   # When the range becomes wider, only coloured squares are displayed
 #'   plotTracks(st, to = 100)
-#' 
+#'
 #'   # When overplotting, a single line will mark the ProteinSequenceTrack
 #'   plotTracks(st)
 #' }
-#' 
+#'
 #' @export
 ProteinSequenceTrack <- function(sequence=NULL, name = "Sequence", ...){
   if(is.null(sequence)){
@@ -268,17 +269,17 @@ ProteinSequenceTrack <- function(sequence=NULL, name = "Sequence", ...){
 }
 
 #' ProteinAxisTrack
-#' 
+#'
 #' A track to display an axis for protein or peptide sequences
-#' 
+#'
 #' @seealso \code{\link{GenomeAxisTrack}}
-#' 
+#'
 #' @author Renan Sauteraud
-#' 
+#'
 #' @name ProteinAxisTrack
 #' @aliases ProteinAxisTrack-class
 #' @export
-#' 
+#'
 setClass("ProteinAxisTrack",
 		contains = "GenomeAxisTrack",
 		representation(addNC = "logical"),
@@ -289,14 +290,14 @@ setMethod("initialize", "ProteinAxisTrack", function(.Object, addNC, name, ...){
 	.makeParMapping()
 	.Object@addNC<-addNC
 	.Object@name<-name
-	.Object<-callNextMethod()	
+	.Object<-callNextMethod()
 })
-	
+
 #' @rdname ProteinAxisTrack
 #' @param range,name,id,... Arguments to be passed to \code{GenomeAxisTrack}.
-#' @param addNC A \code{logical}. If TRUE, display the Amino-terminal and 
+#' @param addNC A \code{logical}. If TRUE, display the Amino-terminal and
 #'   Carboxyl-terminal ends on the axis.
-#' 
+#'
 #' @examples
 #' # Object construction
 #' paxTrack <- ProteinAxisTrack()
@@ -304,7 +305,7 @@ setMethod("initialize", "ProteinAxisTrack", function(.Object, addNC, name, ...){
 #' pax3 <- ProteinAxisTrack(littleTicks=TRUE)
 #' # Plotting
 #' plotTracks(c(paxTrack,pax2,pax3), from=1, to=100)
-#' 
+#'
 #' @export
 ProteinAxisTrack<-function(range=NULL, name="Axis", addNC=FALSE, id=NULL, ...){
 	GvizGAT<-new("GenomeAxisTrack", name=name, range=range, id=id, ...)
