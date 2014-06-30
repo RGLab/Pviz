@@ -313,7 +313,7 @@ setMethod("drawGD", signature("ProteinSequenceTrack"), function(GdObject, minBas
                        lwd=getPar(GdObject, "lwd")))
   }else{
     sequence <- unlist(strsplit(seq, ""))
-    at <- seq((minBase+0.5), length(sequence) - 1 + 0.5, by=1)
+    at <- seq((minBase+0.5), minBase + length(sequence) - 1 + 0.5, by=1)
     #     sequence[sequence=="-"] <- ""
     if(perLetter<0.5){
       sequence[c(1, length(sequence))] <- ""
