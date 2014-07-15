@@ -13,7 +13,7 @@
 #'
 #' @name DTrack
 #' @aliases DTrack-class
-#' @importClassesFrom Gviz DataTrack NumericTrack RangeTrack GdObject
+## @importClassesFrom Gviz DataTrack NumericTrack RangeTrack GdObject
 #' @author Renan Sauteraud
 #' @export
 setClass("DTrack", contains = "DataTrack", representation = representation())
@@ -65,7 +65,7 @@ DTrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, data,
 #'
 #' @name ATrack
 #' @aliases ATrack-class
-#' @importClassesFrom Gviz AnnotationTrack StackedTrack RangeTrack GdObject
+## @importClassesFrom Gviz AnnotationTrack StackedTrack RangeTrack GdObject
 #' @author Renan Sauteraud
 #' @export
 setClass("ATrack", contains="AnnotationTrack", representation=representation())
@@ -122,7 +122,7 @@ ATrack <- function(range=NULL, start=NULL, end=NULL, width=NULL, group,
 #' @name ProbeTrack
 #' @aliases ProbeTrack-class
 #' @author Renan Sauteraud
-#' @importClassesFrom Gviz GdObject
+## @importClassesFrom Gviz GdObject
 #' @export
 setClass("ProbeTrack", contains = "GdObject",
 		representation(sequence="list", intensity = "list",	probeStart = "list"),
@@ -221,7 +221,7 @@ ProbeTrack <- function(sequence, intensity, probeStart, restab = NULL,
 #' @importFrom IRanges IRanges
 #' @importFrom biovizBase getBioColor
 #' @importFrom Biostrings AA_ALPHABET
-#' @importClassesFrom Gviz GdObject
+## @importClassesFrom Gviz GdObject
 #' @export
 #'
 setClass("ProteinSequenceTrack",

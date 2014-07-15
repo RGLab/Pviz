@@ -1,5 +1,6 @@
 #' @import methods
 #' @import data.table
+#' @import Gviz
 NULL
 
 .inter_group <- function(data){
@@ -183,3 +184,10 @@ CladeTrack <- function(restab, clade, name = clade, ...){
       chromosome = DT@chromosome, genome = DT@genome,
       name = DT@name, ...)
 }
+
+setMethod("show", "CladeTrack", def = function(object){
+  msg <- sprintf(paste("CladeTrack '%s'\n| clade: %s\n| positions: %s\n| samples:%s", sep = ""),
+                 names(object), object@clade, length(object),
+                 nrow(values(object)))
+  cat(paste(msg, collapse = "\n"), "\n")
+})

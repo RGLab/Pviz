@@ -7,12 +7,6 @@ setMethod("show", "DTrack", def = function(object){
                  nrow(values(object)))
   cat(paste(msg, collapse = "\n"), "\n")
 })
-setMethod("show", "CladeTrack", def = function(object){
-  msg <- sprintf(paste("CladeTrack '%s'\n| clade: %s\n| positions: %s\n| samples:%s", sep = ""),
-                 names(object), object@clade, length(object),
-                 nrow(values(object)))
-  cat(paste(msg, collapse = "\n"), "\n")
-})
 
 #ProbeTrack Accessors
 setGeneric("ProbeStart",def=function(obj,...) standardGeneric("ProbeStart"))
