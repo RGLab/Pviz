@@ -150,7 +150,7 @@ setClass("CladeTrack", contains = "DTrack",
 
 setMethod("initialize", "CladeTrack", function(.Object, clade, ...){
   .Object@clade <- clade
-  .Object <- callNextMethod() #Call the initialize function of Pviz::DTrack
+  .Object <- callNextMethod(.Object, ...) #Call the initialize function of Pviz::DTrack
   return(.Object)
 })
 

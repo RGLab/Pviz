@@ -144,7 +144,7 @@ setMethod("initialize", "ProbeTrack", function(.Object, sequence, intensity, pro
 			.Object@sequence <- sequence
 			.Object@intensity <- intensity
 			.Object@probeStart <- probeStart
-			.Object <- callNextMethod() #Call the initialize function of Gviz::GdObject
+			.Object <- callNextMethod(.Object, ...) #Call the initialize function of Gviz::GdObject
 			return(.Object)
       })
 
@@ -290,7 +290,7 @@ setMethod("initialize", "ProteinAxisTrack", function(.Object, addNC, name, ...){
 	.makeParMapping()
 	.Object@addNC<-addNC
 	.Object@name<-name
-	.Object<-callNextMethod()
+	.Object<-callNextMethod(.Object, ...)
 })
 
 #' @rdname ProteinAxisTrack
