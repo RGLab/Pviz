@@ -1,7 +1,7 @@
 Package: Pviz
 Type: Package
 Title: Peptide Annotation and Data Visualization using Gviz
-Version: 1.1.1
+Version: 1.2.0
 Author: Renan Sauteraud, Mike Jiang, Raphael Gottardo
 Maintainer: Renan Sauteraud <rsautera@fhcrc.org>
 Description: Pviz adapts the Gviz package for protein sequences and data.
